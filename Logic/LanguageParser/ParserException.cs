@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
 
 namespace Logic.LanguageParser
@@ -9,6 +10,18 @@ namespace Logic.LanguageParser
     [Serializable]
     public class ParserException : Exception
     {
+        /// <summary>
+        /// Gets or sets the index.
+        /// </summary>
+        /// <value>The index.</value>
+        public int Index { get; set; }
+
+        /// <summary>
+        /// Gets or sets the substring.
+        /// </summary>
+        /// <value>The substring.</value>
+        public string Substring { get; set; }
+
         //
         // For guidelines regarding the creation of new exception types, see
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
@@ -19,25 +32,38 @@ namespace Logic.LanguageParser
         /// <summary>
         /// Initializes a new instance of the <see cref="ParserException"/> class.
         /// </summary>
-        public ParserException()
+        /// <param name="index">The index.</param>
+        /// <param name="substring">The substring.</param>
+        public ParserException(int index, string substring)
         {
+            Index = index;
+            Substring = substring;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParserException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
-        public ParserException(string message) : base(message)
+        /// <param name="index">The index.</param>
+        /// <param name="substring">The substring.</param>
+        public ParserException(string message, int index, string substring)
+            : base(message)
         {
+            Index = index;
+            Substring = substring;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParserException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
+        /// <param name="index">The index.</param>
+        /// <param name="substring">The substring.</param>
         /// <param name="inner">The inner.</param>
-        public ParserException(string message, Exception inner) : base(message, inner)
+        public ParserException(string message, int index, string substring, Exception inner) : base(message, inner)
         {
+            Index = index;
+            Substring = substring;
         }
 
         /// <summary>

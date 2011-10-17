@@ -8,7 +8,7 @@ namespace Logic.LanguageParser
     /// <summary>
     /// Eine Token-Beschreibung
     /// </summary>
-    [DebuggerDisplay("{_expression}")]
+    [DebuggerDisplay("{Expression}, {Description}")]
     public sealed class TokenDescription
     {
         /// <summary>
