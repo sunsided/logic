@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Logic.LanguageParser;
 
 namespace Logic
@@ -10,7 +7,7 @@ namespace Logic
 	{
 		static void Main(string[] args)
 		{
-            IList<TokenDescription> tokenDescriptions = new List<TokenDescription>();
+            TokenDescriptionSet tokenDescriptions = new TokenDescriptionSet();
             tokenDescriptions.Add(new TokenDescription(@"[\+\*]", "Operatoren (binär)"));
             tokenDescriptions.Add(new TokenDescription(@"[~']", "Operatoren (unär)"));
             tokenDescriptions.Add(new TokenDescription(@"[a-zA-Z]+([0-9]*[a-zA-Z]*_*])*", "Bezeichner"));
