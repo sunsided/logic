@@ -63,6 +63,9 @@ namespace Logic.LanguageParser
             equation = RemoveWhiteSpace(equation);
             List<Token> tokenList = new List<Token>();
 
+            // TODO: Matchen mittels Regex-Gruppen!
+            // TODO: Wenn Regex-Gruppe gefunden, Substring von equation abschneiden und repeat, bis Eingang leer
+
             // Durchlaufen, bis keine weiteren Token mehr gefunden werden können
             KeyValuePair<TokenDescription, int>? lastTokenDescription = null; // TODO: Umwandeln in eigene Struktur/Klasse
 
