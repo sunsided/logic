@@ -9,7 +9,7 @@ namespace Logic.LanguageParser
     /// Eine Token-Beschreibung
     /// </summary>
     [DebuggerDisplay("{Expression}, {Description}")]
-    public sealed class TokenDescription
+    public abstract class TokenDescription
     {
         /// <summary>
         /// Die Regular Expression, die das Token beschreibt

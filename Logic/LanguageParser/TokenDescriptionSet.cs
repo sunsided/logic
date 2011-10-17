@@ -40,18 +40,6 @@ namespace Logic.LanguageParser
         }
 
         /// <summary>
-        /// Adds the specified description.
-        /// </summary>
-        /// <param name="regularExpression">The regular expression.</param>
-        /// <param name="description">The description.</param>
-        public void Add(string regularExpression, string description)
-        {
-            Contract.Requires(!String.IsNullOrEmpty(regularExpression), "The regular expression must not be empty");
-            Contract.Requires(!String.IsNullOrEmpty(description), "The description must not be empty");
-            Add(new TokenDescription(regularExpression, description));
-        }
-
-        /// <summary>
         /// Parses the specified equation.
         /// </summary>
         /// <param name="equation">The equation.</param>

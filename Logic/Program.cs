@@ -1,5 +1,6 @@
 ﻿using System;
 using Logic.LanguageParser;
+using Logic.LanguageParser.Descriptions;
 
 namespace Logic
 {
@@ -8,12 +9,12 @@ namespace Logic
 		static void Main(string[] args)
 		{
             TokenDescriptionSet tokenDescriptions = new TokenDescriptionSet();
-            tokenDescriptions.Add(new TokenDescription(@"^[\+\*]$", "Operatoren (binär)"));
-            tokenDescriptions.Add(new TokenDescription(@"^'$", "Negation (postfix)"));
-            tokenDescriptions.Add(new TokenDescription(@"^~$", "Negation (prefix)"));
-            tokenDescriptions.Add(new TokenDescription(@"^[a-zA-Z]+([0-9]|[a-zA-Z]|_)*$", "Bezeichner"));
-            tokenDescriptions.Add(new TokenDescription(@"^\($", "Klammern (öffnend)"));
-            tokenDescriptions.Add(new TokenDescription(@"^\)$", "Klammern (schließend)"));
+            tokenDescriptions.Add(new OperatorToken(@"^[\+\*]$", "Operatoren (binär)"));
+            tokenDescriptions.Add(new PostfixNegationToken(@"^'$", "Negation (postfix)"));
+            tokenDescriptions.Add(new PrefixNegationToken(@"^~$", "Negation (prefix)"));
+            tokenDescriptions.Add(new TermToken(@"^[a-zA-Z]+([0-9]|[a-zA-Z]|_)*$", "Bezeichner"));
+            tokenDescriptions.Add(new GroupOpenToken(@"^\($", "Klammern (öffnend)"));
+            tokenDescriptions.Add(new GroupCloseToken(@"^\)$", "Klammern (schließend)"));
 
 		    string equation = "foo + (alpha + beta') * (input3 + ~data_avail)";
 

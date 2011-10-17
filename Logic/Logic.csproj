@@ -69,6 +69,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LanguageParser\Descriptions\GroupCloseToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\GroupOpenToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\TermToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\OperatorToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\INegationToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\PostfixNegationToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\PrefixNegationToken.cs" />
     <Compile Include="LanguageParser\Token.cs" />
     <Compile Include="LanguageParser\TokenDescription.cs" />
     <Compile Include="LanguageParser\TokenDescriptionSet.cs" />
