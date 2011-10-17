@@ -1,0 +1,7 @@
+*.asv
+*.dotCover
+*.user
+*.suo
+_ReSharper.*
+bin
+obj
