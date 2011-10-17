@@ -14,17 +14,18 @@ namespace Logic.LanguageParser
         /// <summary>
         /// Die Regular Expression, die das Token beschreibt
         /// </summary>
-        private readonly Regex _expression;
+        public Regex Expression { get; private set; }
 
         /// <summary>
         /// Die Regex
         /// </summary>
-        public string Expression { get; private set; }
+        public string ExpressionString { [Pure] get { return Expression.ToString(); } }
 
         /// <summary>
         /// Die Bezeichnung des Tokens
         /// </summary>
         public string Description { get; private set; }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenDescription"/> class.
@@ -37,8 +38,7 @@ namespace Logic.LanguageParser
             Contract.Requires(!String.IsNullOrEmpty(regularExpression), "The regular expression must not be empty");
             Contract.Requires(!String.IsNullOrEmpty(description), "The description must not be empty");
 
-            Expression = regularExpression;
-            _expression = new Regex(regularExpression, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+            Expression = new Regex(regularExpression, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
             Description = description;
         }
         
@@ -50,7 +50,7 @@ namespace Logic.LanguageParser
         [ContractInvariantMethod]
         private void ContractInvariant()
         {
-            Contract.Invariant(_expression != null, "Expression must not be null");
+            Contract.Invariant(Expression != null, "Expression must not be null");
         }
 
         #endregion

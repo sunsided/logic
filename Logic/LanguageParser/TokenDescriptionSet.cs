@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace Logic.LanguageParser
 {
@@ -50,7 +51,57 @@ namespace Logic.LanguageParser
             Add(new TokenDescription(regularExpression, description));
         }
 
-        #region Contracts
+        /// <summary>
+        /// Parses the specified equation.
+        /// </summary>
+        /// <param name="equation">The equation.</param>
+        /// <returns></returns>
+        public IList<Token> Parse(string equation)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(equation), "Equation must not be null");
+            List<Token> tokenList = new List<Token>();
+
+            // Initiales Token hinzufügen
+            tokenList.Add(new Token(equation));
+
+            // Durchlaufen, bis keine weiteren Token mehr gefunden werden können
+            KeyValuePair<TokenDescription, int>? lastTokenDescription = null; // TODO: Umwandeln in eigene Struktur/Klasse
+            for (int ci = 0; ci <= equation.Length; ++ci)
+            {
+                string substring = equation[ci].ToString();
+                List<TokenDescription> possibleToken = _tokenDescriptions.Where(desc => desc.Expression.IsMatch(c)).ToList();
+                
+                // Sicherstellen, dass nur eine Tokenbeschreibung zutrifft
+                if (possibleToken.Count > 1) throw new ParserException("Could not evaluate equation. Multiple Token matched for substring '" + substring + "'.");
+
+                // Token beziehen
+                TokenDescription currentTokenDescription = possibleToken[0];
+                Contract.Assume(currentTokenDescription != null, "The selected token description was null.");
+
+                // Wenn ein Token gefunden wurde - Regelfall
+                // (es wird nur der Initialfall ausgeschlossen)
+                if (lastTokenDescription != null)
+                {
+                    // Prüfen, ob eine neue Tokenbeschreibung gefunden wurde,
+                    // d.h. das vorherige Token beendet wurde, falls vorhanden
+                    if (currentTokenDescription != lastTokenDescription.Value.Key)
+                    {
+
+                        // Eben gefundenes Token merken
+                        lastTokenDescription = new KeyValuePair<TokenDescription, int>(currentTokenDescription, ci);
+                    }
+                }
+                else
+                {
+                    // Initiales Token schreiben
+                    lastTokenDescription = new KeyValuePair<TokenDescription, int>(currentTokenDescription, ci);
+                }
+            }
+
+            return tokenList;
+        }
+
+            #region Contracts
 
         /// <summary>
         /// Vertragsinvariante
