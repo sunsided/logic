@@ -52,6 +52,68 @@ namespace Logic.LanguageParser
         }
 
         /// <summary>
+        /// Parses the specified equation.
+        /// </summary>
+        /// <param name="equation">The equation.</param>
+        /// <returns></returns>
+        public IList<Token> Parse(string equation)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(equation), "Equation must not be null");
+            Contract.Requires(equation.Length >= 1, "Equation must contain at least one element");
+            equation = RemoveWhiteSpace(equation);
+            List<Token> tokenList = new List<Token>();
+
+            // Durchlaufen, bis keine weiteren Token mehr gefunden werden können
+            KeyValuePair<TokenDescription, int>? lastTokenDescription = null; // TODO: Umwandeln in eigene Struktur/Klasse
+
+            for (int currentCharIndex = 0; currentCharIndex <= equation.Length; ++currentCharIndex)
+            {
+                string substring = null;
+                TokenDescription currentTokenDescription = null;
+
+                // Substring so lange aufziehen, bis keine Tokenbeschreibung mehr passt
+                if (currentCharIndex < equation.Length)
+                {
+                    substring = ExtractProtoToken(equation, currentCharIndex, lastTokenDescription);
+                    currentTokenDescription = GetMatchingTokenDescription(currentCharIndex, substring);
+                }
+
+                // Wenn die Verarbeitung fehlschlägt, ist das gültige Token beendet und ein neues beginnt
+                if (currentTokenDescription == null)
+                {
+                    // Bezeichner auswerten
+                    Contract.Assume(lastTokenDescription != null);
+                    string tokenString = ExtractTokenFromEquation(equation, currentCharIndex, lastTokenDescription.Value);
+                    tokenList.Add(new Token(tokenString, lastTokenDescription.Value.Key));
+
+                    // Abbruchkriterium
+                    if (currentCharIndex == equation.Length) break;
+
+                    // Neues Token auswerten
+                    string newSubstring = equation.Substring(currentCharIndex, 1);
+                    currentTokenDescription = GetMatchingTokenDescription(currentCharIndex, newSubstring);
+                    if (currentTokenDescription == null) throw new ParserException("Could not evaluate equation. Token mismatch at index " + currentCharIndex + " (" + substring + ")", currentCharIndex, substring);
+                    substring = newSubstring;
+                }
+
+                // Token beziehen
+                Contract.Assume(currentTokenDescription != null, "The selected token description was null.");
+
+                // Wenn ein Token gefunden wurde - Regelfall
+                if (lastTokenDescription == null)
+                {
+                    lastTokenDescription = new KeyValuePair<TokenDescription, int>(currentTokenDescription, 0);
+                }
+                else if (currentTokenDescription != lastTokenDescription.Value.Key)
+                {
+                    lastTokenDescription = new KeyValuePair<TokenDescription, int>(currentTokenDescription, currentCharIndex);
+                }
+            }
+
+            return tokenList;
+        }
+
+        /// <summary>
         /// Entfernt whitespace aus der Eingabe
         /// </summary>
         /// <param name="value">Die Eingabe</param>
@@ -64,55 +126,36 @@ namespace Logic.LanguageParser
         }
 
         /// <summary>
-        /// Parses the specified equation.
+        /// Extracts the proto token.
         /// </summary>
         /// <param name="equation">The equation.</param>
+        /// <param name="currentCharIndex">Index of the current char.</param>
+        /// <param name="tokenDescription">The token description.</param>
         /// <returns></returns>
-        public IList<Token> Parse(string equation)
+        private string ExtractProtoToken(string equation, int currentCharIndex, KeyValuePair<TokenDescription, int>? tokenDescription)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(equation), "Equation must not be null");
-            equation = RemoveWhiteSpace(equation);
-            List<Token> tokenList = new List<Token>();
+            int startIndex = tokenDescription != null ? tokenDescription.Value.Value : 0;
+            int length = tokenDescription != null ? (currentCharIndex - tokenDescription.Value.Value + 1) : 1;
+            return equation.Substring(startIndex, length);
+        }
 
-            // Durchlaufen, bis keine weiteren Token mehr gefunden werden können
-            KeyValuePair<TokenDescription, int>? lastTokenDescription = null; // TODO: Umwandeln in eigene Struktur/Klasse
-            for (int currentCharIndex = 0; currentCharIndex <= equation.Length; ++currentCharIndex)
-            {
-                string substring = equation[currentCharIndex].ToString();
-                List<TokenDescription> possibleToken = _tokenDescriptions.Where(desc => desc.Expression.IsMatch(substring)).ToList();
-                
-                // Sicherstellen, dass nur eine Tokenbeschreibung zutrifft
-                if (possibleToken.Count > 1) throw new ParserException("Could not evaluate equation. Multiple Token matched at index " + currentCharIndex + " for substring '" + substring + "'.", currentCharIndex, substring);
-                if (possibleToken.Count == 0) throw new ParserException("Could not evaluate equation. Token mismatch at index " + currentCharIndex + " (" + substring + ")", currentCharIndex, substring);
+        /// <summary>
+        /// Gets the matching token description.
+        /// </summary>
+        /// <param name="currentCharIndex">Index of the current char.</param>
+        /// <param name="substring">The substring.</param>
+        /// <returns>Das Token oder <c>null</c>, falls kein passendes Token gefunden wurde</returns>
+        /// <exception cref="ParserException">Es trafen mehrere Tokenbeschreibungen auf das Token zu</exception>
+        private TokenDescription GetMatchingTokenDescription(int currentCharIndex, string substring)
+        {
+            // Gültige Tokenbeschreibung ermitteln
+            List<TokenDescription> possibleToken = _tokenDescriptions.Where(desc => desc.Expression.IsMatch(substring)).ToList();
 
-                // Token beziehen
-                TokenDescription currentTokenDescription = possibleToken[0];
-                Contract.Assume(currentTokenDescription != null, "The selected token description was null.");
-
-                // Wenn ein Token gefunden wurde - Regelfall
-                // (es wird nur der Initialfall ausgeschlossen)
-                if (lastTokenDescription != null)
-                {
-                    // Prüfen, ob eine neue Tokenbeschreibung gefunden wurde,
-                    // d.h. das vorherige Token beendet wurde, falls vorhanden
-                    if (currentTokenDescription != lastTokenDescription.Value.Key)
-                    {
-                        // Bezeichner auswerten
-                        var tokenString = ExtractTokenFromEquation(equation, currentCharIndex, lastTokenDescription.Value);
-                        tokenList.Add(new Token(tokenString, lastTokenDescription.Value.Key));
-
-                        // Eben gefundenes Token merken
-                        lastTokenDescription = new KeyValuePair<TokenDescription, int>(currentTokenDescription, currentCharIndex);
-                    }
-                }
-                else // Initialfall
-                {
-                    // Initiales Token schreiben
-                    lastTokenDescription = new KeyValuePair<TokenDescription, int>(currentTokenDescription, currentCharIndex);
-                }
-            }
-
-            return tokenList;
+            // Sicherstellen, dass nur eine Tokenbeschreibung zutrifft
+            if (possibleToken.Count > 1) throw new ParserException("Could not evaluate equation. Multiple Token matched at index " + currentCharIndex + " for substring '" + substring + "'.", currentCharIndex, substring);
+            
+            // Token oder null zurückgeben
+            return possibleToken.Count > 0 ? possibleToken[0] : null;
         }
 
         /// <summary>

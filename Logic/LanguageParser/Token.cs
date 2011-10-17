@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace Logic.LanguageParser
 {
+    /// <summary>
+    /// Ein Token
+    /// </summary>
+    [DebuggerDisplay("{SubExpression} {OriginDescription.Description}")]
     public sealed class Token
     {
         /// <summary>
