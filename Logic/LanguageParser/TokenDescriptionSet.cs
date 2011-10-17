@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Logic.LanguageParser
 {
@@ -56,6 +57,19 @@ namespace Logic.LanguageParser
 
             // Durchlaufen, bis keine weiteren Token mehr gefunden werden können
             KeyValuePair<TokenDescription, int>? lastTokenDescription = null; // TODO: Umwandeln in eigene Struktur/Klasse
+
+            // Auswertung
+            while (equation.Length > 0)
+            {
+                var matches = _tokenDescriptions
+                    .Where(desc => desc.Expression.IsMatch(equation))
+                    .Select(desc => desc)
+                    .ToList();
+                Contract.Assume(matches.Count == 1);
+
+            }
+
+
 
             for (int currentCharIndex = 0; currentCharIndex <= equation.Length; ++currentCharIndex)
             {
