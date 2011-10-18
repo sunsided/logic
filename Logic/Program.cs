@@ -11,7 +11,7 @@ namespace Logic
 		    const string binaryOperatorTerms = "and|or|nand|nor|xor";
             const string unaryOperatorTerms = "not";
 
-            TokenDescriptionSet tokenDescriptions = new TokenDescriptionSet();
+            Parser tokenDescriptions = new Parser();
             tokenDescriptions.Add(new BinaryOperatorToken(@"^([\+\*\|\^]|" + binaryOperatorTerms + ")", "Operatoren (binär)"));
             tokenDescriptions.Add(new PostfixNegationToken(@"^'", "Negation (postfix)"));
             tokenDescriptions.Add(new PrefixNegationToken(@"^(~|" + unaryOperatorTerms + ")", "Negation (prefix)"));

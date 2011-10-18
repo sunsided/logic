@@ -10,7 +10,7 @@ namespace Logic.LanguageParser
     /// <summary>
     /// Satz an Tokenbeschreibungen
     /// </summary>
-    public sealed class TokenDescriptionSet
+    public sealed class Parser
     {
         /// <summary>
         /// Die Beschreibungen
