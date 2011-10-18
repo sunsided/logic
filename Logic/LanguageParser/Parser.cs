@@ -52,15 +52,10 @@ namespace Logic.LanguageParser
             Contract.Requires(equation.Length >= 1, "Equation must contain at least one element");
             List<Token> tokenList = new List<Token>();
 
-            // TODO: Matchen mittels Regex-Gruppen!
-            // TODO: Wenn Regex-Gruppe gefunden, Substring von equation abschneiden und repeat, bis Eingang leer
-
-            // Durchlaufen, bis keine weiteren Token mehr gefunden werden können
-            KeyValuePair<TokenDescription, int>? lastTokenDescription = null; // TODO: Umwandeln in eigene Struktur/Klasse
-
             // Gleichung so lange durchlaufen, bis keine weiteren Gruppen/Token mehr
             // gefunden werden.
             string strippedEquation = equation;
+            int marchingIndex = 0;
             while (strippedEquation.Length > 0)
             {
                 // Aus allen Beschreibungen eine finden, die passt
@@ -77,15 +72,35 @@ namespace Logic.LanguageParser
                 Contract.Assume(match.Success);
                 
                 // Token erzeugen
-                tokenList.Add(new Token(match.Value, description));
+                tokenList.Add(new Token(match.Value, description, marchingIndex));
 
                 // Gleichung vorbereiten
-                strippedEquation = strippedEquation.Substring(match.Index + match.Length).TrimStart();
+                PrepareEquationAndUpdateIndex(match, ref strippedEquation, ref marchingIndex);
             }
 
             return tokenList;
         }
 
+        /// <summary>
+        /// Bereitet die Gleichung für die nächste Iteration vor und aktualisiert den marching index
+        /// </summary>
+        /// <param name="match">Der zuletzt gefundene Treffer</param>
+        /// <param name="strippedEquation">Die Eingabe, die für die Auswertung benutzt wird</param>
+        /// <param name="marchingIndex">Der zu aktualisierende Index</param>
+        private static void PrepareEquationAndUpdateIndex(Match match, ref string strippedEquation, ref int marchingIndex)
+        {
+            // Eben ermittelten Teil von der Eingabe abziehen
+            strippedEquation = strippedEquation.Substring(match.Index + match.Length);
+
+            // Ermitteln, wie viele Leerzeichen vom Anfang entfernt werden müssen
+            // und diese zur Verrechnung mit dem marching index merken
+            string spacesRemoved = strippedEquation.TrimStart();
+            int numberOfSpacesRemoved = strippedEquation.Length - spacesRemoved.Length;
+            strippedEquation = spacesRemoved;
+
+            // Index hochzählen
+            marchingIndex += match.Index + match.Length + numberOfSpacesRemoved;
+        }
 
         #region Contracts
 

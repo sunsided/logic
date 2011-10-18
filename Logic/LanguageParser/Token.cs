@@ -11,25 +11,38 @@ namespace Logic.LanguageParser
         /// <summary>
         /// Der Ausdruck
         /// </summary>
-        public string Value { get; private set; }
+        public string Value { [Pure] get; private set; }
 
         /// <summary>
         /// Das zugehörige Beschreibung
         /// </summary>
-        public TokenDescription OriginDescription { get; private set; }
+        public TokenDescription OriginDescription { [Pure] get; private set; }
+
+        /// <summary>
+        /// Der Index in der Eingangsgleichung
+        /// </summary>
+        public int Index { [Pure] get; private set; }
+
+        /// <summary>
+        /// Die Länge des Tokens
+        /// </summary>
+        public int Length { [Pure] get { return Value.Length; } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Token"/> class.
         /// </summary>
         /// <param name="value">The sub expression.</param>
         /// <param name="originDescription">The origin description.</param>
-        public Token(string value, TokenDescription originDescription)
+        /// <param name="index">The index.</param>
+        public Token(string value, TokenDescription originDescription, int index)
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(value), "Unterausdruck darf nicht null sein");
             Contract.Requires(originDescription != null, "Stammausdruck darf nicht null sein");
+            Contract.Requires(index >= 0, "Index darf nicht kleiner als 0 sein");
 
             OriginDescription = originDescription;
             Value = value;
+            Index = index;
         }
 
         /// <summary>

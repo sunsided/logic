@@ -80,7 +80,7 @@
     <Compile Include="LanguageParser\Descriptions\PrefixNegationToken.cs" />
     <Compile Include="LanguageParser\Token.cs" />
     <Compile Include="LanguageParser\TokenDescription.cs" />
-    <Compile Include="LanguageParser\TokenDescriptionSet.cs" />
+    <Compile Include="LanguageParser\Parser.cs" />
     <Compile Include="LanguageParser\ParserException.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
