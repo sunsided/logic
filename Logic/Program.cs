@@ -19,7 +19,7 @@ namespace Logic
             parser.Add(new GroupOpenToken(@"^\(", "Klammern (öffnend)"));
             parser.Add(new GroupCloseToken(@"^\)", "Klammern (schließend)"));
 
-		    string equation = "foo + (Alpha + Beta') * (input3 + ~data_avail) and not foo";
+		    const string equation = "foo + (Alpha + Beta') * (input3 + ~data_avail) and not foo";
 
             // Token basicToken = new Token(equation);
 		    var tokenList = parser.Parse(equation);
