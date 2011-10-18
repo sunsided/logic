@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Logic.LanguageParser
 {
@@ -40,30 +42,6 @@ namespace Logic.LanguageParser
         }
 
         /// <summary>
-        /// Adds the specified description.
-        /// </summary>
-        /// <param name="regularExpression">The regular expression.</param>
-        /// <param name="description">The description.</param>
-        public void Add(string regularExpression, string description)
-        {
-            Contract.Requires(!String.IsNullOrEmpty(regularExpression), "The regular expression must not be empty");
-            Contract.Requires(!String.IsNullOrEmpty(description), "The description must not be empty");
-            Add(new TokenDescription(regularExpression, description));
-        }
-
-        /// <summary>
-        /// Entfernt whitespace aus der Eingabe
-        /// </summary>
-        /// <param name="value">Die Eingabe</param>
-        /// <returns></returns>
-        private string RemoveWhiteSpace(string value)
-        {
-            Contract.Requires(value != null, "Value must not be null");
-            Contract.Ensures(Contract.Result<string>() != null);
-            return value.Replace(" ", "").Replace("\t", ""); // TODO: Naiven Ansatz durch Regex o.ä. ersetzen
-        }
-
-        /// <summary>
         /// Parses the specified equation.
         /// </summary>
         /// <param name="equation">The equation.</param>
@@ -71,74 +49,43 @@ namespace Logic.LanguageParser
         public IList<Token> Parse(string equation)
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(equation), "Equation must not be null");
-            equation = RemoveWhiteSpace(equation);
+            Contract.Requires(equation.Length >= 1, "Equation must contain at least one element");
             List<Token> tokenList = new List<Token>();
+
+            // TODO: Matchen mittels Regex-Gruppen!
+            // TODO: Wenn Regex-Gruppe gefunden, Substring von equation abschneiden und repeat, bis Eingang leer
 
             // Durchlaufen, bis keine weiteren Token mehr gefunden werden können
             KeyValuePair<TokenDescription, int>? lastTokenDescription = null; // TODO: Umwandeln in eigene Struktur/Klasse
-            for (int currentCharIndex = 0; currentCharIndex <= equation.Length; ++currentCharIndex)
+
+            // Gleichung so lange durchlaufen, bis keine weiteren Gruppen/Token mehr
+            // gefunden werden.
+            string strippedEquation = equation;
+            while (strippedEquation.Length > 0)
             {
-                string substring = equation[currentCharIndex].ToString();
-                List<TokenDescription> possibleToken = _tokenDescriptions.Where(desc => desc.Expression.IsMatch(substring)).ToList();
+                // Aus allen Beschreibungen eine finden, die passt
+                List<TokenDescription> matches = _tokenDescriptions
+                    .Where(desc => desc.Expression.IsMatch(strippedEquation))
+                    .Select(desc => desc)
+                    .ToList();
+                if (matches.Count > 1) Trace.TraceWarning("Multiple token descriptions found for substring \"" + matches[0].Expression.Match(strippedEquation).Value + "\"");
+                Contract.Assume(matches.Count == 1);               
+
+                // Die gefundene Beschreibung auswerten
+                TokenDescription description = matches[0];
+                Match match = description.Expression.Match(strippedEquation);
+                Contract.Assume(match.Success);
                 
-                // Sicherstellen, dass nur eine Tokenbeschreibung zutrifft
-                if (possibleToken.Count > 1) throw new ParserException("Could not evaluate equation. Multiple Token matched at index " + currentCharIndex + " for substring '" + substring + "'.", currentCharIndex, substring);
-                if (possibleToken.Count == 0) throw new ParserException("Could not evaluate equation. Token mismatch at index " + currentCharIndex + " (" + substring + ")", currentCharIndex, substring);
+                // Token erzeugen
+                tokenList.Add(new Token(match.Value, description));
 
-                // Token beziehen
-                TokenDescription currentTokenDescription = possibleToken[0];
-                Contract.Assume(currentTokenDescription != null, "The selected token description was null.");
-
-                // Wenn ein Token gefunden wurde - Regelfall
-                // (es wird nur der Initialfall ausgeschlossen)
-                if (lastTokenDescription != null)
-                {
-                    // Prüfen, ob eine neue Tokenbeschreibung gefunden wurde,
-                    // d.h. das vorherige Token beendet wurde, falls vorhanden
-                    if (currentTokenDescription != lastTokenDescription.Value.Key)
-                    {
-                        // Bezeichner auswerten
-                        var tokenString = ExtractTokenFromEquation(equation, currentCharIndex, lastTokenDescription.Value);
-                        tokenList.Add(new Token(tokenString, lastTokenDescription.Value.Key));
-
-                        // Eben gefundenes Token merken
-                        lastTokenDescription = new KeyValuePair<TokenDescription, int>(currentTokenDescription, currentCharIndex);
-                    }
-                }
-                else // Initialfall
-                {
-                    // Initiales Token schreiben
-                    lastTokenDescription = new KeyValuePair<TokenDescription, int>(currentTokenDescription, currentCharIndex);
-                }
+                // Gleichung vorbereiten
+                strippedEquation = strippedEquation.Substring(match.Index + match.Length).TrimStart();
             }
 
             return tokenList;
         }
 
-        /// <summary>
-        /// Extrahiert ein Token aus der Eingabe
-        /// </summary>
-        /// <param name="equation">Die Eingabe</param>
-        /// <param name="currentCharIndex">Der aktuelle Zeichenindex</param>
-        /// <param name="tokenDescription">Die Beschreibung des Tokens</param>
-        /// <returns>Das Token</returns>
-        private static string ExtractTokenFromEquation(string equation, int currentCharIndex, KeyValuePair<TokenDescription, int> tokenDescription)
-        {
-            Contract.Requires(!String.IsNullOrWhiteSpace(equation), "Equation must not be null");
-            Contract.Requires(currentCharIndex >= 1, "Aktueller Zeichenindex muss größer als 0 sein");
-            Contract.Ensures(!String.IsNullOrWhiteSpace(Contract.Result<string>()), "Das Token darf nicht null sein");
-
-            // Bereich ermitteln
-            int startIndex = tokenDescription.Value;
-            int endIndex = currentCharIndex - 1; // (ist im worst case identisch mit startIndex)
-            int length = endIndex - startIndex + 1;
-            Contract.Assume(length > 0, "Token length must be greater than zero");
-
-            // Token abziehen
-            string token = equation.Substring(startIndex, length);
-            Contract.Assume(!String.IsNullOrWhiteSpace(token), "Token must not be empty");
-            return token;
-        }
 
         #region Contracts
 

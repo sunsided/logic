@@ -9,7 +9,7 @@ namespace Logic.LanguageParser
     /// Eine Token-Beschreibung
     /// </summary>
     [DebuggerDisplay("{Expression}, {Description}")]
-    public sealed class TokenDescription
+    public abstract class TokenDescription
     {
         /// <summary>
         /// Die Regular Expression, die das Token beschreibt
@@ -26,19 +26,18 @@ namespace Logic.LanguageParser
         /// </summary>
         public string Description { get; private set; }
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenDescription"/> class.
         /// </summary>
         /// <param name="regularExpression">The regular expression.</param>
         /// <param name="description">The description.</param>
         /// <remarks></remarks>
-        public TokenDescription(string regularExpression, string description)
+        protected TokenDescription(string regularExpression, string description)
         {
             Contract.Requires(!String.IsNullOrEmpty(regularExpression), "The regular expression must not be empty");
             Contract.Requires(!String.IsNullOrEmpty(description), "The description must not be empty");
 
-            Expression = new Regex(regularExpression, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+            Expression = new Regex(regularExpression, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
             Description = description;
         }
         
