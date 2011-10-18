@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Logic.LanguageParser;
 using Logic.LanguageParser.Descriptions;
+using Logic.TokenInterpreter;
 
 namespace Logic
 {
@@ -22,7 +24,7 @@ namespace Logic
 		    const string equation = "foo + (Alpha + Beta') * (input3 + ~data_avail) and not foo";
 
             // Token basicToken = new Token(equation);
-		    var tokenList = parser.Parse(equation);
+		    IList<Token> tokenList = parser.Parse(equation);
 
             // Ausgeben, weil wegen
             Console.WriteLine("{0,-5}{1,-20}{2}", "Idx", "Wert", "Klasse");
@@ -33,6 +35,10 @@ namespace Logic
                 Console.WriteLine("{0,-5}{1,-20}{2}" , token.Index, token.Value, token.OriginDescription.Description);
             }
             
+            // Intepretation durchführen
+            Interpreter interpreter = new Interpreter();
+            interpreter.Interpret(tokenList);
+
             // Abbruch.
             Console.WriteLine();
             Console.WriteLine("Taste zum Beenden ...");
