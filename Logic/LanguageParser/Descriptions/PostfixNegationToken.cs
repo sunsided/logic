@@ -3,13 +3,8 @@
     /// <summary>
     /// Negation
     /// </summary>
-    public sealed class PostfixNegationToken : TokenDescription, INegationToken
+    public sealed class PostfixNegationToken : UnaryOperatorToken, INegationToken
     {
-        /// <summary>
-        /// Gibt an, ob es sich um eine Prefix-Negation handelt
-        /// </summary>
-        public bool IsPrefix { get { return false; } }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PrefixNegationToken"/> class.
         /// </summary>
@@ -17,7 +12,7 @@
         /// <param name="description">The description.</param>
         /// <remarks></remarks>
         public PostfixNegationToken(string regularExpression, string description)
-            : base(regularExpression, description)
+            : base(regularExpression, description, false)
         {
         }
     }

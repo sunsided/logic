@@ -8,21 +8,35 @@ namespace Logic
 	{
 		static void Main(string[] args)
 		{
+		    const string binaryOperatorTerms = "and|or|nand|nor|xor";
+            const string unaryOperatorTerms = "not";
+
             TokenDescriptionSet tokenDescriptions = new TokenDescriptionSet();
-            tokenDescriptions.Add(new OperatorToken(@"^[\+\*]", "Operatoren (binär)"));
+            tokenDescriptions.Add(new BinaryOperatorToken(@"^([\+\*\|\^]|" + binaryOperatorTerms + ")", "Operatoren (binär)"));
             tokenDescriptions.Add(new PostfixNegationToken(@"^'", "Negation (postfix)"));
-            tokenDescriptions.Add(new PrefixNegationToken(@"^~", "Negation (prefix)"));
-            tokenDescriptions.Add(new TermToken(@"^[a-zA-Z]+([0-9]|[a-zA-Z]|_)*", "Bezeichner"));
+            tokenDescriptions.Add(new PrefixNegationToken(@"^(~|" + unaryOperatorTerms + ")", "Negation (prefix)"));
+            tokenDescriptions.Add(new TermToken(@"^(?!(" + binaryOperatorTerms + "|" + unaryOperatorTerms + "))[a-z]+([0-9]|[a-z]|_)*", "Term"));
             tokenDescriptions.Add(new GroupOpenToken(@"^\(", "Klammern (öffnend)"));
             tokenDescriptions.Add(new GroupCloseToken(@"^\)", "Klammern (schließend)"));
 
-		    string equation = "foo + (alpha + beta') * (input3 + ~data_avail)";
+		    string equation = "foo + (Alpha + Beta') * (input3 + ~data_avail) and not foo";
 
             // Token basicToken = new Token(equation);
 		    var tokenList = tokenDescriptions.Parse(equation);
-		    
-            Console.WriteLine(":P");
-            Console.ReadKey();
+
+            // Ausgeben, weil wegen
+            Console.WriteLine("{0,-5}{1,-20}{2}", "Idx", "Wert", "Klasse");
+            Console.WriteLine();
+            for (int i=0; i<tokenList.Count; ++i)
+            {
+                Token token = tokenList[i];
+                Console.WriteLine("{0,-5}{1,-20}{2}" , i, token.Value, token.OriginDescription.Description);
+            }
+            
+            // Abbruch.
+            Console.WriteLine();
+            Console.WriteLine("Teste zum Beenden ...");
+            Console.ReadKey(true);
 		}
 	}
 }

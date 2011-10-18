@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace Logic.LanguageParser
@@ -7,13 +6,12 @@ namespace Logic.LanguageParser
     /// <summary>
     /// Ein Token
     /// </summary>
-    [DebuggerDisplay("{SubExpression} {OriginDescription.Description}")]
     public sealed class Token
     {
         /// <summary>
         /// Der Ausdruck
         /// </summary>
-        public string SubExpression { get; private set; }
+        public string Value { get; private set; }
 
         /// <summary>
         /// Das zugehörige Beschreibung
@@ -21,33 +19,39 @@ namespace Logic.LanguageParser
         public TokenDescription OriginDescription { get; private set; }
 
         /// <summary>
-        /// Gibt an, ob das Token identifiziert wurde
-        /// </summary>
-        public bool IsIdentified { [Pure] get { return OriginDescription != null; } }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Token"/> class.
         /// </summary>
-        /// <param name="subExpression">The sub expression.</param>
+        /// <param name="value">The sub expression.</param>
         /// <param name="originDescription">The origin description.</param>
-        public Token(string subExpression, TokenDescription originDescription)
-            : this(subExpression)
+        public Token(string value, TokenDescription originDescription)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(subExpression), "Unterausdruck darf nicht null sein");
+            Contract.Requires(!String.IsNullOrWhiteSpace(value), "Unterausdruck darf nicht null sein");
             Contract.Requires(originDescription != null, "Stammausdruck darf nicht null sein");
 
             OriginDescription = originDescription;
+            Value = value;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Token"/> class.
+        /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
-        /// <param name="subExpression">The sub expression.</param>
-        public Token(string subExpression)
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString()
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(subExpression), "Unterausdruck darf nicht null sein");
+            return Value + " --> " + OriginDescription.Description;
+        }
 
-            SubExpression = subExpression;
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode() ^ OriginDescription.GetHashCode();
         }
     }
 }

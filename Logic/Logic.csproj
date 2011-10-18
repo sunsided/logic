@@ -69,6 +69,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LanguageParser\Descriptions\BinaryOperatorToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\UnaryOperatorToken.cs" />
     <Compile Include="LanguageParser\Descriptions\GroupCloseToken.cs" />
     <Compile Include="LanguageParser\Descriptions\GroupOpenToken.cs" />
     <Compile Include="LanguageParser\Descriptions\TermToken.cs" />
