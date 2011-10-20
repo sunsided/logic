@@ -14,9 +14,9 @@ namespace Logic
             const string unaryOperatorTerms = "not";
 
             Parser parser = new Parser();
-            parser.Add(new BinaryOperatorToken(@"^([\+\*\|\^]|" + binaryOperatorTerms + ")", "Operatoren (binär)"));
+            parser.Add(new BinaryOperatorToken(@"^([\+\*\|\^|\||&]|" + binaryOperatorTerms + ")", "Operatoren (binär)"));
             parser.Add(new PostfixNegationToken(@"^'", "Negation (postfix)"));
-            parser.Add(new PrefixNegationToken(@"^(~|" + unaryOperatorTerms + ")", "Negation (prefix)"));
+            parser.Add(new PrefixNegationToken(@"^(~|!|" + unaryOperatorTerms + ")", "Negation (prefix)"));
             parser.Add(new TermToken(@"^(?!(" + binaryOperatorTerms + "|" + unaryOperatorTerms + "))[a-z]+([0-9]|[a-z]|_)*", "Term"));
             parser.Add(new GroupOpenToken(@"^\(", "Klammern (öffnend)"));
             parser.Add(new GroupCloseToken(@"^\)", "Klammern (schließend)"));

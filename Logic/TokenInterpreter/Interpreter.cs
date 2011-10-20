@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using Logic.LanguageParser;
 using System.Linq;
 using Logic.LanguageParser.Descriptions;
+using Logic.TokenInterpreter.TokenTypes;
 
 namespace Logic.TokenInterpreter
 {
@@ -12,6 +13,21 @@ namespace Logic.TokenInterpreter
     /// </summary>
     public sealed class Interpreter
     {
+        /// <summary>
+        /// Die Token-Map
+        /// </summary>
+        private readonly TokenTypeMap TokenMap = new TokenTypeMap();
+
+        private void InitializeTokenMap()
+        {
+            TokenMap.Add(new TokenTypeMapEntry(typeof(AndOperator), "*", "&", "and"));
+            TokenMap.Add(new TokenTypeMapEntry(typeof(OrOperator), "+", "|", "^", "or"));
+            TokenMap.Add(new TokenTypeMapEntry(typeof(NotOperator), "~", "!", "'"));
+            
+            // TODO: Schmarrn - wann Term, wann Gruppe?
+            // TODO: Aufbau der Parser-Regex aus diesen Defitionen?
+        }
+
         /// <summary>
         /// Interprets the specified token sequence.
         /// </summary>
