@@ -37,25 +37,40 @@ namespace Logic
         /// </summary>
         /// <param name="sequence">Die Sequenz</param>
         /// <returns>Die Liste der Token</returns>
-        public IList<TokenDescription> Parse(string sequence)
+        public IList<TokenMatch> Parse(string sequence)
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(sequence), "Sequenz darf nicht leer sein");
-            List<TokenDescription> tokenDescriptions = new List<TokenDescription>();
-            
-            /*
-            sequence = sequence.Trim();
-            while (sequence.Length > 0)
-            {
-                List<TokenDescription> foundDescriptions = _descriptions.Where(description => description.IsMatch(sequence)).ToList();
-                Contract.Assume(!(foundDescriptions.Count > 1), "Es wurde mehr als eine Tokenbeschreibung gefunden.");
-                Contract.Assume(foundDescriptions.Count == 1, "Es wurde keine Tokenbeschreibung gefunden.");
+            Contract.Ensures(Contract.Result<IList<TokenDescription>>() != null);
+            List<TokenMatch> tokens = new List<TokenMatch>();
 
-                // Beschreibung extrahieren
-                TokenDescription desciption = foundDescriptions[0];
-                tokenDescriptions.Add(desciption);
+            // Vorbereitung
+            IList<TokenMatch> localMatches = new List<TokenMatch>();
+
+            // Sequenz durchlaufen, bis nichts mehr zu ermitteln ist
+            int marchingIndex = 0;
+            while (marchingIndex < sequence.Length)
+            {
+                // Alle Beschreibungen durchlaufen und Treffer ermitteln
+                localMatches.Clear();
+                foreach (var tokenDescription in _descriptions)
+                {
+                    TokenMatch localMatch;
+                    if (!tokenDescription.IsMatch(sequence, marchingIndex, out localMatch)) continue;
+                    localMatches.Add(localMatch);
+                }
+
+                // Sanity check
+                Contract.Assume(!(localMatches.Count > 1), "Es wurde mehr als eine Tokenbeschreibung gefunden and Index " + marchingIndex);
+                Contract.Assume(localMatches.Count == 1, "Es wurde keine Tokenbeschreibung gefunden an Index " + marchingIndex);
+
+                // Token extrahieren
+                TokenMatch match = localMatches[0];
+                tokens.Add(match);
+
+                // Hochzählen
+                marchingIndex = match.Index + match.Length;
             }
-            */
-            return null;
+            return tokens;
         }
 
 
