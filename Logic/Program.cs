@@ -6,8 +6,11 @@ namespace Logic
 	{
 		static void Main(string[] args)
 		{
-            TokenDescription and = new TokenDescription();
+            TokenDescription and = new TokenDescription("AND");
             and.AddKeyword("and", "*", "&", "&&");
+
+            TokenDescription or = new TokenDescription("OR");
+            and.AddKeyword("or", "+", "^", "|", "||");
 
 		    string sequence = "and now what?";
             if (and.MatchAndTrim(ref sequence))

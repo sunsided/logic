@@ -92,6 +92,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenDescription.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="TokenInterpreter\Interpreter.cs" />
     <Compile Include="TokenInterpreter\TokenTypeMap.cs" />
     <Compile Include="TokenInterpreter\TokenTypeMapEntry.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="TokenInterpreter\TokenTypes\NandOperator.cs" />
     <Compile Include="TokenInterpreter\TokenTypes\OrOperator.cs" />
     <Compile Include="TokenInterpreter\TokenTypes\TokenNode.cs" />
+    <Compile Include="TokenMatch.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -12,6 +12,11 @@ namespace Logic
     public sealed class TokenDescription
     {
         /// <summary>
+        /// Beschreibungstext
+        /// </summary>
+        public string Description { [Pure] get; private set; }
+
+        /// <summary>
         /// Die Liste der Schlüsselworte
         /// </summary>
         private readonly HashSet<string> _keywords = new HashSet<string>();
@@ -42,11 +47,22 @@ namespace Logic
         private Regex _cachedRegex;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="TokenDescription"/> class.
+        /// </summary>
+        /// <param name="descriptionText">The description text.</param>
+        /// <remarks></remarks>
+        public TokenDescription(string descriptionText)
+        {
+            Contract.Requires(descriptionText != null, "Beschreibungstext darf nicht null sein");
+            Description = descriptionText;
+        }
+
+        /// <summary>
         /// Fügt ein Schlüsselwort hinzu
         /// </summary>
         /// <param name="keyword">Das Schlüsselwort</param>
         /// <param name="additionalKeywords">Zusätzliche Schlüsselworte</param>
-        public void AddKeyword(string keyword, params string[] additionalKeywords)
+        public TokenDescription AddKeyword(string keyword, params string[] additionalKeywords)
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(keyword), "Keyword darf nicht leer sein");
             Contract.Requires(additionalKeywords != null, "Zusätzliche Keywords dürfen nicht null sein");
@@ -58,6 +74,31 @@ namespace Logic
             {
                 _wordSetChanged |= _keywords.Add(additionalKeywords[a]);
             }
+
+            // Metchod chaining
+            return this;
+        }
+
+        /// <summary>
+        /// Fügt ein reserviertes Wort hinzu
+        /// </summary>
+        /// <param name="word">Das reservierte Wort</param>
+        /// <param name="additionalWords">Zusätzliche reservierte Worte</param>
+        public TokenDescription AddReservedWord(string word, params string[] additionalWords)
+        {
+            Contract.Requires(!String.IsNullOrWhiteSpace(word), "Keyword darf nicht leer sein");
+            Contract.Requires(additionalWords != null, "Zusätzliche Keywords dürfen nicht null sein");
+            Contract.Requires(Contract.ForAll(additionalWords, w => !String.IsNullOrWhiteSpace(w)), "Zusätzliche Keywords dürfen nicht leer sein");
+
+            // Reservierte hinzufügen
+            _wordSetChanged |= _reservedWords.Add(word);
+            for (int a = additionalWords.Length - 1; a >= 0; --a)
+            {
+                _wordSetChanged |= _reservedWords.Add(additionalWords[a]);
+            }
+
+            // Metchod chaining
+            return this;
         }
 
         /// <summary>
@@ -103,10 +144,11 @@ namespace Logic
         }
 
         /// <summary>
-        /// 
+        /// Ermittelt, ob die aktuelle Regex auf die Eingabe passt und entfernt dann das gefundene Token
+        /// vom Beginn der Sequenz oder lässt die Sequenz unverändert.
         /// </summary>
-        /// <param name="sequence"></param>
-        /// <returns></returns>
+        /// <param name="sequence">Die Sequenz</param>
+        /// <returns><c>true</c> im Erfolgsfall, ansonsten <c>false</c></returns>
         public bool MatchAndTrim(ref string sequence)
         {
             Contract.Requires(sequence != null);
@@ -117,25 +159,6 @@ namespace Logic
                 return true;
             }
             return false;
-        }
-
-        /// <summary>
-        /// Fügt ein reserviertes Wort hinzu
-        /// </summary>
-        /// <param name="word">Das reservierte Wort</param>
-        /// <param name="additionalWords">Zusätzliche reservierte Worte</param>
-        public void AddReservedWord(string word, params string[] additionalWords)
-        {
-            Contract.Requires(!String.IsNullOrWhiteSpace(word), "Keyword darf nicht leer sein");
-            Contract.Requires(additionalWords != null, "Zusätzliche Keywords dürfen nicht null sein");
-            Contract.Requires(Contract.ForAll(additionalWords, w => !String.IsNullOrWhiteSpace(w)), "Zusätzliche Keywords dürfen nicht leer sein");
-
-            // Reservierte hinzufügen
-            _wordSetChanged |= _reservedWords.Add(word);
-            for (int a = additionalWords.Length - 1; a >= 0; --a)
-            {
-                _wordSetChanged |= _reservedWords.Add(additionalWords[a]);
-            }
         }
 
         /// <summary>
@@ -203,6 +226,7 @@ namespace Logic
         {
             Contract.Invariant(_keywords != null);
             Contract.Invariant(_reservedWords != null);
+            Contract.Invariant(Description != null);
         }
 
         #endregion
