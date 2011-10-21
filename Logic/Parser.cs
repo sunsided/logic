@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace Logic
 {
@@ -20,6 +21,16 @@ namespace Logic
         public int Count { [Pure] get { return _descriptions.Count; } }
 
         /// <summary>
+        /// Bezieht die Beschreibung mit dem gegebenen Tokentyp
+        /// </summary>
+        /// <param name="type">Der Tokentyp</param>
+        /// <returns>Die Beschreibung oder <c>null</c>, wenn keine Beschreibung gefunden wurde</returns>
+        public TokenDescription GetDescription(TokenType type)
+        {
+            return _descriptions.Where(description => description.Type == type).FirstOrDefault();
+        }
+
+        /// <summary>
         /// Fügt eine Beschreibung zum Satz hinzu
         /// </summary>
         /// <param name="description">Die hinzuzufügende Beschreibung</param>
@@ -29,6 +40,9 @@ namespace Logic
             Contract.Requires(description != null, "Description darf nicht null sein");
             Contract.Ensures(Contract.Result<TokenDescription>() != null);
 
+            // Vorraussetzen, dass Typ noch nicht existent
+            Contract.Assume(GetDescription(description.Type) == null);
+
             _descriptions.Add(description);
             return description;
         }
@@ -37,11 +51,16 @@ namespace Logic
         /// Fügt eine Beschreibung zum Satz hinzu
         /// </summary>
         /// <param name="descriptionText">Die hinzuzufügende Beschreibung</param>
+        /// <param name="type">The type.</param>
         /// <returns>Die hinzuzufügende Beschreibung (method chaining)</returns>
+        /// <remarks></remarks>
         public TokenDescription AddDescription(string descriptionText, TokenType type)
         {
             Contract.Requires(descriptionText != null, "Beschreibungstext darf nicht null sein");
             Contract.Ensures(Contract.Result<TokenDescription>() != null);
+
+            // Vorraussetzen, dass Typ noch nicht existent
+            Contract.Assume(GetDescription(type) == null);
 
             TokenDescription td = new TokenDescription(descriptionText, type);
             _descriptions.Add(td);

@@ -11,7 +11,7 @@ namespace Logic
     /// Die Beschreibung eines Tokens
     /// </summary>
     [DebuggerDisplay("{Description}")]
-    public sealed class TokenDescription
+    public sealed class TokenDescription : ITokenDescription
     {
         /// <summary>
         /// Beschreibungstext
@@ -22,7 +22,7 @@ namespace Logic
         /// Typ des Tokens
         /// </summary>
         public TokenType Type { [Pure] get; private set; }
-
+        
         /// <summary>
         /// Die Liste der Schlüsselworte
         /// </summary>
@@ -234,6 +234,18 @@ namespace Logic
             return new Regex(regularExpression, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace);
         }
         
+        /// <summary>
+        /// Bezieht einen Override
+        /// </summary>
+        /// <param name="newDescription"></param>
+        /// <returns></returns>
+        public TokenDescriptionOverride GetOverride(TokenDescription newDescription)
+        {
+            Contract.Requires(newDescription != null);
+            Contract.Ensures(Contract.Result<TokenDescriptionOverride>() != null);
+            return new TokenDescriptionOverride(this, newDescription);
+        }
+
         #region Code Contracts
 
         /// <summary>

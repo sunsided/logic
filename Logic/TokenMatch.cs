@@ -29,7 +29,7 @@ namespace Logic
         /// Gets the description.
         /// </summary>
         /// <remarks></remarks>
-        public TokenDescription Description { [Pure]  get; private set; }
+        public ITokenDescription Description { [Pure] get; private set; }
 
         /// <summary>
         /// Der Typ des Tokens
@@ -43,7 +43,7 @@ namespace Logic
         /// <param name="token">The token.</param>
         /// <param name="description">The description.</param>
         /// <remarks></remarks>
-        public TokenMatch(int index, string token, TokenDescription description)
+        public TokenMatch(int index, string token, ITokenDescription description)
         {
             Contract.Requires(index >= 0, "Index muss größer oder gleich 0 sein");
             Contract.Requires(!String.IsNullOrWhiteSpace(token), "Token darf nicht leer sein");
