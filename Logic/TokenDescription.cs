@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ namespace Logic
     /// <summary>
     /// Die Beschreibung eines Tokens
     /// </summary>
+    [DebuggerDisplay("{Description}")]
     public sealed class TokenDescription
     {
         /// <summary>
@@ -115,7 +117,7 @@ namespace Logic
             Contract.Assume(KeywordCount > 0, "Keine Schlüsselworte definiert");
 
             // Sequenz vorbereiten
-            startIndex += CountLeftWhiteSpace(sequence);
+            startIndex += CountLeftWhiteSpace(sequence, startIndex);
 
             // Regex auswerten
             Regex regex = GetRegexFromWords();
@@ -133,16 +135,19 @@ namespace Logic
             matchedKeyword = null;
             return false;
         }
-        
+
         /// <summary>
         /// Ermittelt die Anzahl der am Anfang der Sequenz
         /// </summary>
         /// <param name="sequence">Die Sequenz</param>
+        /// <param name="startIndex">The start index.</param>
         /// <returns></returns>
-        private int CountLeftWhiteSpace(string sequence)
+        /// <remarks></remarks>
+        private int CountLeftWhiteSpace(string sequence, int startIndex)
         {
             Contract.Requires(sequence != null);
-            int difference = sequence.Length - sequence.TrimStart().Length;
+            string substring = sequence.Substring(startIndex);
+            int difference = substring.Length - substring.TrimStart().Length;
             return difference;
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Logic
@@ -7,24 +8,21 @@ namespace Logic
 	{
 		static void Main(string[] args)
 		{
-            TokenDescription and = new TokenDescription("AND");
-            and.AddKeyword("and", "*", "&", "&&");
-
-            TokenDescription or = new TokenDescription("OR");
-            and.AddKeyword("or", "+", "^", "|", "||");
-
-		    string sequence = "  and now what?";
-		    TokenMatch match;
-            if (and.IsMatch(sequence, 0, out match))
-            {
-                Console.Write(sequence);
-            }
-
-            sequence = "or now what?";
-            if (and.IsMatch(sequence, 0, out match))
-            {
-                Console.Write(sequence);
-            }
+            Parser parser = new Parser();
+		    parser.AddDescription("AND").AddKeyword("and", "*", "&", "&&");
+            parser.AddDescription("OR").AddKeyword("or", "+", "^", "|", "||");
+            parser.AddDescription("XOR").AddKeyword("xor");
+            parser.AddDescription("NOR").AddKeyword("nor");
+            parser.AddDescription("XNOR").AddKeyword("xnor");
+            parser.AddDescription("NAND").AddKeyword("nand");
+            parser.AddDescription("NOT>").AddKeyword("not", "!", "~");
+            parser.AddDescription("<NOT").AddKeyword("'");
+            parser.AddDescription("GRPSTRT").AddKeyword("(");
+            parser.AddDescription("GRPEND").AddKeyword(")");
+            
+		    string sequence = "(a and b) | (a and c)";
+		    
+		    IList<TokenMatch> result = parser.Parse(sequence);
 
             /*
 		    const string andOperatorTerms = "and";

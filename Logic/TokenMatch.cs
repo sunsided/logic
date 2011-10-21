@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace Logic
 {
@@ -39,9 +40,33 @@ namespace Logic
         /// <remarks></remarks>
         public TokenMatch(int index, string token, TokenDescription description)
         {
+            Contract.Requires(index >= 0, "Index muss größer oder gleich 0 sein");
+            Contract.Requires(!String.IsNullOrWhiteSpace(token), "Token darf nicht leer sein");
+            Contract.Requires(description != null, "Description darf nicht null sein");
+
             Index = index;
             Token = token;
             Description = description;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
+        /// <remarks></remarks>
+        public override string ToString()
+        {
+            return String.Format("{2}@{0}:{1}, \"{3}\"", Index, Index + Length, Description.Description, Token);
+        }
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
+        /// <remarks></remarks>
+        public override int GetHashCode()
+        {
+            return Index.GetHashCode() ^ Description.GetHashCode();
         }
     }
 }

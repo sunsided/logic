@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
 
 namespace Logic
 {
@@ -28,8 +26,26 @@ namespace Logic
         /// <returns>Die hinzuzufügende Beschreibung (method chaining)</returns>
         public TokenDescription AddDescription(TokenDescription description)
         {
+            Contract.Requires(description != null, "Description darf nicht null sein");
+            Contract.Ensures(Contract.Result<TokenDescription>() != null);
+
             _descriptions.Add(description);
             return description;
+        }
+
+        /// <summary>
+        /// Fügt eine Beschreibung zum Satz hinzu
+        /// </summary>
+        /// <param name="descriptionText">Die hinzuzufügende Beschreibung</param>
+        /// <returns>Die hinzuzufügende Beschreibung (method chaining)</returns>
+        public TokenDescription AddDescription(string descriptionText)
+        {
+            Contract.Requires(descriptionText != null, "Beschreibungstext darf nicht null sein");
+            Contract.Ensures(Contract.Result<TokenDescription>() != null);
+
+            TokenDescription td = new TokenDescription(descriptionText);
+            _descriptions.Add(td);
+            return td;
         }
 
         /// <summary>
