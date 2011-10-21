@@ -16,13 +16,15 @@ namespace Logic.TokenInterpreter
         /// <summary>
         /// Die Token-Map
         /// </summary>
-        private readonly TokenTypeMap TokenMap = new TokenTypeMap();
+        //private readonly TokenTypeMap TokenMap = new TokenTypeMap();
 
         private void InitializeTokenMap()
         {
+            /*
             TokenMap.Add(new TokenTypeMapEntry(typeof(AndOperator), "*", "&", "and"));
             TokenMap.Add(new TokenTypeMapEntry(typeof(OrOperator), "+", "|", "^", "or"));
             TokenMap.Add(new TokenTypeMapEntry(typeof(NotOperator), "~", "!", "'"));
+            */
             
             // TODO: Schmarrn - wann Term, wann Gruppe?
             // TODO: Aufbau der Parser-Regex aus diesen Defitionen?

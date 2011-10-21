@@ -10,11 +10,23 @@ namespace Logic
 	{
 		static void Main(string[] args)
 		{
-		    const string binaryOperatorTerms = "and|or|nand|nor|xor";
+		    const string andOperatorTerms = "and";
+            const string orOperatorTerms = "or";
+            const string norOperatorTerms = "or";
+            const string xorOperatorTerms = "or";
+            const string xnorOperatorTerms = "or";
+            const string nandOperatorTerms = "or";
+		    string binaryOperatorTerms = andOperatorTerms + "|" + orOperatorTerms + "|" + norOperatorTerms + "|" +
+		                                 xorOperatorTerms + "|" + xnorOperatorTerms + "|" + nandOperatorTerms;
             const string unaryOperatorTerms = "not";
 
             Parser parser = new Parser();
-            parser.Add(new BinaryOperatorToken(@"^([\+\*\|\^|\||&]|" + binaryOperatorTerms + ")", "Operatoren (binär)"));
+            parser.Add(new AndOperatorToken(@"^([\*&]|" + andOperatorTerms + ")", "AND"));
+            parser.Add(new AndOperatorToken(@"^(" + nandOperatorTerms + ")", "NAND"));
+            parser.Add(new OrOperatorToken(@"^([\+\|\^]|" + orOperatorTerms + ")", "OR"));
+            parser.Add(new NorOperatorToken(@"^(" + norOperatorTerms + ")", "NOR"));
+            parser.Add(new XorOperatorToken(@"^(" + xorOperatorTerms + ")", "XOR"));
+            parser.Add(new XnorOperatorToken(@"^(" + xnorOperatorTerms + ")", "XNOR"));
             parser.Add(new PostfixNegationToken(@"^'", "Negation (postfix)"));
             parser.Add(new PrefixNegationToken(@"^(~|!|" + unaryOperatorTerms + ")", "Negation (prefix)"));
             parser.Add(new TermToken(@"^(?!(" + binaryOperatorTerms + "|" + unaryOperatorTerms + "))[a-z]+([0-9]|[a-z]|_)*", "Term"));

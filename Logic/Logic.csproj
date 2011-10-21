@@ -70,6 +70,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LanguageParser\Descriptions\BinaryOperatorToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\AndOperatorToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\XnorOperatorToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\XorOperatorToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\NorOperatorToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\NandOperatorToken.cs" />
+    <Compile Include="LanguageParser\Descriptions\OrOperatorToken.cs" />
     <Compile Include="LanguageParser\Descriptions\UnaryOperatorToken.cs" />
     <Compile Include="LanguageParser\Descriptions\GroupCloseToken.cs" />
     <Compile Include="LanguageParser\Descriptions\GroupOpenToken.cs" />

@@ -3,15 +3,16 @@
     /// <summary>
     /// Token für einen binären Operator
     /// </summary>
-    public abstract class BinaryOperatorToken : OperatorToken
+    public sealed class AndOperatorToken : BinaryOperatorToken
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BinaryOperatorToken"/> class.
+        /// Initializes a new instance of the <see cref="AndOperatorToken"/> class.
         /// </summary>
         /// <param name="regularExpression">The regular expression.</param>
         /// <param name="description">The description.</param>
         /// <remarks></remarks>
-        public BinaryOperatorToken(string regularExpression, string description) : base(regularExpression, description)
+        public AndOperatorToken(string regularExpression, string description)
+            : base(regularExpression, description)
         {
         }
     }
