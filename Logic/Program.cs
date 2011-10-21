@@ -89,7 +89,7 @@ namespace Logic
             if (groupStack.Count != 0) throw new ParenthesesMismatchException(ParenthesesMismatchException.ErrorType.TooFewClosing, "Syntaxfehler: Schließende Klammer fehlt.");
 
             // Reverse-NOT entfernen
-            RemoveReverseNot(parser, ref sequence);
+            ReverseNotToForwardNot(parser, ref sequence);
             return sequence;
         }
 
@@ -99,7 +99,7 @@ namespace Logic
         /// <param name="parser">The parser.</param>
         /// <param name="sequence">Die zu beackernde Sequenz</param>
         /// <remarks></remarks>
-        private static void RemoveReverseNot(Parser parser, ref IList<TokenSequenceEntry> sequence)
+        private static void ReverseNotToForwardNot(Parser parser, ref IList<TokenSequenceEntry> sequence)
         {
             Contract.Requires(parser != null);
             Contract.Requires(sequence != null);
@@ -114,7 +114,7 @@ namespace Logic
                 if (entry is SequenceEntry)
                 {
                     IList<TokenSequenceEntry> subSequence = ((SequenceEntry) entry).ChildSequence;
-                    RemoveReverseNot(parser, ref subSequence);
+                    ReverseNotToForwardNot(parser, ref subSequence);
                     continue;
                 }
 
