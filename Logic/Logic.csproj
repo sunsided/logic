@@ -69,43 +69,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LanguageParser\Descriptions\BinaryOperatorToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\AndOperatorToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\XnorOperatorToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\XorOperatorToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\NorOperatorToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\NandOperatorToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\OrOperatorToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\UnaryOperatorToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\GroupCloseToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\GroupOpenToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\TermToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\OperatorToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\INegationToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\PostfixNegationToken.cs" />
-    <Compile Include="LanguageParser\Descriptions\PrefixNegationToken.cs" />
-    <Compile Include="LanguageParser\Token.cs" />
-    <Compile Include="LanguageParser\TokenDescription.cs" />
-    <Compile Include="LanguageParser\Parser.cs" />
-    <Compile Include="LanguageParser\ParserException.cs" />
     <Compile Include="ParserRegexBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenDescription.cs" />
     <Compile Include="Parser.cs" />
-    <Compile Include="TokenInterpreter\Interpreter.cs" />
-    <Compile Include="TokenInterpreter\TokenTypeMap.cs" />
-    <Compile Include="TokenInterpreter\TokenTypeMapEntry.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\AndOperator.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\BinaryOperator.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\NotOperator.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\UnaryOperator.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\Term.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\XorOperator.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\NorOperator.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\NandOperator.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\OrOperator.cs" />
-    <Compile Include="TokenInterpreter\TokenTypes\TokenNode.cs" />
     <Compile Include="TokenMatch.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

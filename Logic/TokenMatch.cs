@@ -56,7 +56,7 @@ namespace Logic
         /// <remarks></remarks>
         public override string ToString()
         {
-            return String.Format("{2}@{0}:{1}, \"{3}\"", Index, Index + Length, Description.Description, Token);
+            return String.Format("{2} @ {0}:{1}, \"{3}\"", Index, Index + Length, Description.Description, Token);
         }
 
         /// <summary>

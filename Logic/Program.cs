@@ -19,53 +19,11 @@ namespace Logic
             parser.AddDescription("<NOT").AddKeyword("'");
             parser.AddDescription("GRPS").AddKeyword("(");
             parser.AddDescription("GRPE").AddKeyword(")");
+		    parser.AddDescription("TERM").AddGenericTerms().IgnoreWord("and", "nand", "or", "nor", "xnor", "xor", "not");
             
-		    string sequence = "(and) | (nand)";
+		    string sequence = "(a1 and b) | (a1 nand a2)'";
 		    
 		    IList<TokenMatch> result = parser.Parse(sequence);
-
-            /*
-		    const string andOperatorTerms = "and";
-            const string orOperatorTerms = "or";
-            const string norOperatorTerms = "or";
-            const string xorOperatorTerms = "or";
-            const string xnorOperatorTerms = "or";
-            const string nandOperatorTerms = "or";
-		    string binaryOperatorTerms = andOperatorTerms + "|" + orOperatorTerms + "|" + norOperatorTerms + "|" +
-		                                 xorOperatorTerms + "|" + xnorOperatorTerms + "|" + nandOperatorTerms;
-            const string unaryOperatorTerms = "not";
-
-            Parser parser = new Parser();
-            parser.Add(new AndOperatorToken(@"^([\*&]|" + andOperatorTerms + ")", "AND"));
-            parser.Add(new AndOperatorToken(@"^(" + nandOperatorTerms + ")", "NAND"));
-            parser.Add(new OrOperatorToken(@"^([\+\|\^]|" + orOperatorTerms + ")", "OR"));
-            parser.Add(new NorOperatorToken(@"^(" + norOperatorTerms + ")", "NOR"));
-            parser.Add(new XorOperatorToken(@"^(" + xorOperatorTerms + ")", "XOR"));
-            parser.Add(new XnorOperatorToken(@"^(" + xnorOperatorTerms + ")", "XNOR"));
-            parser.Add(new PostfixNegationToken(@"^'", "Negation (postfix)"));
-            parser.Add(new PrefixNegationToken(@"^(~|!|" + unaryOperatorTerms + ")", "Negation (prefix)"));
-            parser.Add(new TermToken(@"^(?!(" + binaryOperatorTerms + "|" + unaryOperatorTerms + "))[a-z]+([0-9]|[a-z]|_)*", "Term"));
-            parser.Add(new GroupOpenToken(@"^\(", "Klammern (öffnend)"));
-            parser.Add(new GroupCloseToken(@"^\)", "Klammern (schließend)"));
-
-		    const string equation = "foo + (Alpha + Beta') * (input3 + ~data_avail) and not foo";
-
-            // Token basicToken = new Token(equation);
-		    IList<Token> tokenList = parser.Parse(equation);
-
-            // Ausgeben, weil wegen
-            Console.WriteLine("{0,-5}{1,-20}{2}", "Idx", "Wert", "Klasse");
-            Console.WriteLine();
-            for (int ti=0; ti<tokenList.Count; ++ti)
-            {
-                Token token = tokenList[ti];
-                Console.WriteLine("{0,-5}{1,-20}{2}" , token.Index, token.Value, token.OriginDescription.Description);
-            }
-            
-            // Intepretation durchführen
-            Interpreter interpreter = new Interpreter();
-            interpreter.Interpret(tokenList);
-            */
 
             // Abbruch.
             Console.WriteLine();

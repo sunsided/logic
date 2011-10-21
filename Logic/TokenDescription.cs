@@ -69,13 +69,38 @@ namespace Logic
             Contract.Requires(!String.IsNullOrWhiteSpace(keyword), "Keyword darf nicht leer sein");
             Contract.Requires(additionalKeywords != null, "Zusätzliche Keywords dürfen nicht null sein");
             Contract.Requires(Contract.ForAll(additionalKeywords, w => !String.IsNullOrWhiteSpace(w)), "Zusätzliche Keywords dürfen nicht leer sein");
+            Contract.Ensures(Contract.Result<TokenDescription>() != null);
 
             // Schlüsselworte hinzufügen
-            _wordSetChanged |= _keywords.Add(keyword);
+            _wordSetChanged |= _keywords.Add(Regex.Escape(keyword));
             for (int a=additionalKeywords.Length-1; a>=0; --a)
             {
-                _wordSetChanged |= _keywords.Add(additionalKeywords[a]);
+                _wordSetChanged |= _keywords.Add(Regex.Escape(additionalKeywords[a]));
             }
+
+            // Metchod chaining
+            return this;
+        }
+
+        /// <summary>
+        /// Fügt ein Schlüsselwort hinzu
+        /// </summary>
+        public TokenDescription AddGenericTerms()
+        {
+            Contract.Ensures(Contract.Result<TokenDescription>() != null);
+            return AddGenericRegex(@"[a-z]+(\w|_)*");
+        }
+
+        /// <summary>
+        /// Fügt ein Schlüsselwort hinzu
+        /// </summary>
+        public TokenDescription AddGenericRegex(string regex)
+        {
+            Contract.Ensures(Contract.Result<TokenDescription>() != null);
+
+            // Schlüsselworte hinzufügen
+            _wordSetChanged = true;
+            _keywords.Add(regex);
 
             // Metchod chaining
             return this;
@@ -86,17 +111,18 @@ namespace Logic
         /// </summary>
         /// <param name="word">Das reservierte Wort</param>
         /// <param name="additionalWords">Zusätzliche reservierte Worte</param>
-        public TokenDescription AddReservedWord(string word, params string[] additionalWords)
+        public TokenDescription IgnoreWord(string word, params string[] additionalWords)
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(word), "Keyword darf nicht leer sein");
             Contract.Requires(additionalWords != null, "Zusätzliche Keywords dürfen nicht null sein");
             Contract.Requires(Contract.ForAll(additionalWords, w => !String.IsNullOrWhiteSpace(w)), "Zusätzliche Keywords dürfen nicht leer sein");
+            Contract.Ensures(Contract.Result<TokenDescription>() != null);
 
             // Reservierte hinzufügen
-            _wordSetChanged |= _reservedWords.Add(word);
+            _wordSetChanged |= _reservedWords.Add(Regex.Escape(word));
             for (int a = additionalWords.Length - 1; a >= 0; --a)
             {
-                _wordSetChanged |= _reservedWords.Add(additionalWords[a]);
+                _wordSetChanged |= _reservedWords.Add(Regex.Escape(additionalWords[a]));
             }
 
             // Metchod chaining
@@ -170,8 +196,8 @@ namespace Logic
         /// <summary>
         /// Erzeugt die Regular Expression
         /// </summary>
-        /// <param name="keywords">Die Schlüsselworte</param>
-        /// <param name="reservedWords">Die reservierten Worte</param>
+        /// <param name="keywords">Die Schlüsselworte (bereits Regex-escaped)</param>
+        /// <param name="reservedWords">Die reservierten Worte (bereits Regex-escaped)</param>
         /// <returns>Die Regular Expression</returns>
         private static Regex GenerateRegularExpression(ICollection<string> keywords, ICollection<string> reservedWords)
         {
@@ -185,19 +211,17 @@ namespace Logic
 
             // Regex vorbereiten
             string regularExpression;
-            var escapedKeywords = keywords.Select(Regex.Escape);
 
             // Testen, ob reservierte Worte vorliegen
             if (reservedWords.Any())
             {
                 // Expression mit reservierten Worten
-                var escapedReservedWords = reservedWords.Select(Regex.Escape);
-                regularExpression = "^(!?(" + String.Join("|", escapedReservedWords) + "))(?<token>" + String.Join("|", escapedKeywords) + ")";
+                regularExpression = "^(?<token>(?!(" + String.Join("|", reservedWords) + "))" + String.Join("|", keywords) + ")";
             }
             else
             {
                 // Expression ohne reservierte Worte
-                regularExpression = "^(?<token>" + String.Join("|", escapedKeywords) + ")";
+                regularExpression = "^(?<token>" + String.Join("|", keywords) + ")";
             }
 
             // Regex erzeugen
