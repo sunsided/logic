@@ -93,7 +93,7 @@ namespace Logic
             Contract.Requires(token != null, "Token darf nicht null sein");
             Contract.Requires(additionalTokens != null, "Zusätzliche Token dürfen nicht null sein");
             Contract.Requires(Contract.ForAll(additionalTokens, t => t != null), "Zusätzliche Token dürfen nicht null sein");
-            Contract.Ensures(Contract.Result<IList<string>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<string>>() != null);
 
             List<string> words = new List<string>(additionalTokens.Length + 1);
             words.Add(Regex.Escape(token));

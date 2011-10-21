@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Logic.LanguageParser;
-using Logic.LanguageParser.Descriptions;
-using Logic.TokenInterpreter;
 
 namespace Logic
 {
@@ -10,6 +6,22 @@ namespace Logic
 	{
 		static void Main(string[] args)
 		{
+            TokenDescription and = new TokenDescription();
+            and.AddKeyword("and", "*", "&", "&&");
+
+		    string sequence = "and now what?";
+            if (and.MatchAndTrim(ref sequence))
+            {
+                Console.Write(sequence);
+            }
+
+            sequence = "or now what?";
+            if (and.MatchAndTrim(ref sequence))
+            {
+                Console.Write(sequence);
+            }
+
+            /*
 		    const string andOperatorTerms = "and";
             const string orOperatorTerms = "or";
             const string norOperatorTerms = "or";
@@ -50,6 +62,7 @@ namespace Logic
             // Intepretation durchführen
             Interpreter interpreter = new Interpreter();
             interpreter.Interpret(tokenList);
+            */
 
             // Abbruch.
             Console.WriteLine();
