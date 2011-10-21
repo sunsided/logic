@@ -85,8 +85,13 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenInterpreter\Interpreter.cs" />
+    <Compile Include="TokenInterpreter\TokenTypeMap.cs" />
+    <Compile Include="TokenInterpreter\TokenTypeMapEntry.cs" />
     <Compile Include="TokenInterpreter\TokenTypes\AndOperator.cs" />
     <Compile Include="TokenInterpreter\TokenTypes\BinaryOperator.cs" />
+    <Compile Include="TokenInterpreter\TokenTypes\NotOperator.cs" />
+    <Compile Include="TokenInterpreter\TokenTypes\UnaryOperator.cs" />
+    <Compile Include="TokenInterpreter\TokenTypes\Term.cs" />
     <Compile Include="TokenInterpreter\TokenTypes\XorOperator.cs" />
     <Compile Include="TokenInterpreter\TokenTypes\NorOperator.cs" />
     <Compile Include="TokenInterpreter\TokenTypes\NandOperator.cs" />
