@@ -32,6 +32,11 @@ namespace Logic
         public TokenDescription Description { [Pure]  get; private set; }
 
         /// <summary>
+        /// Der Typ des Tokens
+        /// </summary>
+        public TokenType Type { [Pure] get { return Description.Type; } }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TokenMatch"/> class.
         /// </summary>
         /// <param name="index">The index.</param>

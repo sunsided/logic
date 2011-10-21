@@ -19,6 +19,11 @@ namespace Logic
         public string Description { [Pure] get; private set; }
 
         /// <summary>
+        /// Typ des Tokens
+        /// </summary>
+        public TokenType Type { [Pure] get; private set; }
+
+        /// <summary>
         /// Die Liste der Schlüsselworte
         /// </summary>
         private readonly HashSet<string> _keywords = new HashSet<string>();
@@ -53,10 +58,11 @@ namespace Logic
         /// </summary>
         /// <param name="descriptionText">The description text.</param>
         /// <remarks></remarks>
-        public TokenDescription(string descriptionText)
+        public TokenDescription(string descriptionText, TokenType type)
         {
             Contract.Requires(descriptionText != null, "Beschreibungstext darf nicht null sein");
             Description = descriptionText;
+            Type = type;
         }
 
         /// <summary>

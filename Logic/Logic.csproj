@@ -72,9 +72,13 @@
     <Compile Include="ParserRegexBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sequence\SequenceEntry.cs" />
+    <Compile Include="Sequence\TokenEntry.cs" />
+    <Compile Include="Sequence\TokenSequenceEntry.cs" />
     <Compile Include="TokenDescription.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="TokenMatch.cs" />
+    <Compile Include="TokenType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

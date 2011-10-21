@@ -38,12 +38,12 @@ namespace Logic
         /// </summary>
         /// <param name="descriptionText">Die hinzuzufügende Beschreibung</param>
         /// <returns>Die hinzuzufügende Beschreibung (method chaining)</returns>
-        public TokenDescription AddDescription(string descriptionText)
+        public TokenDescription AddDescription(string descriptionText, TokenType type)
         {
             Contract.Requires(descriptionText != null, "Beschreibungstext darf nicht null sein");
             Contract.Ensures(Contract.Result<TokenDescription>() != null);
 
-            TokenDescription td = new TokenDescription(descriptionText);
+            TokenDescription td = new TokenDescription(descriptionText, type);
             _descriptions.Add(td);
             return td;
         }
