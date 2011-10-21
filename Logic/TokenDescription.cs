@@ -100,65 +100,50 @@ namespace Logic
             // Metchod chaining
             return this;
         }
-
+        
         /// <summary>
         /// Ermittelt, ob diese Tokenbeschreibung auf die angegebene Sequenz passt
         /// </summary>
         /// <param name="sequence">Die Eingabesequenz</param>
-        /// <returns><c>true</c> if the specified sequence is match; otherwise, <c>false</c>.</returns>
-        /// <remarks></remarks>
-        public bool IsMatch(string sequence)
-        {
-            Contract.Requires(sequence != null);
-
-            string ignored;
-            return IsMatch(sequence, out ignored);
-        }
-
-        /// <summary>
-        /// Ermittelt, ob diese Tokenbeschreibung auf die angegebene Sequenz passt
-        /// </summary>
-        /// <param name="sequence">Die Eingabesequenz</param>
+        /// <param name="startIndex">Der Startindex innerhalb der Sequenz</param>
         /// <param name="matchedKeyword">Das gefundene Keyword im Erfolgsfall, ansonsten <c>null</c></param>
         /// <returns></returns>
-        public bool IsMatch(string sequence, out string matchedKeyword)
+        public bool IsMatch(string sequence, int startIndex, out TokenMatch matchedKeyword)
         {
             Contract.Requires(sequence != null);
             Contract.Ensures((Contract.ValueAtReturn(out matchedKeyword) == null && !Contract.Result<bool>()) || (Contract.ValueAtReturn(out matchedKeyword) != null && Contract.Result<bool>()));
             Contract.Assume(KeywordCount > 0, "Keine Schlüsselworte definiert");
 
+            // Sequenz vorbereiten
+            startIndex += CountLeftWhiteSpace(sequence);
+
             // Regex auswerten
             Regex regex = GetRegexFromWords();
-            Match match = regex.Match(sequence);
+            Match match = regex.Match(sequence.Substring(startIndex));
 
             // Im Erfolgsfall das getroffene Wort ausgeben
             if (match.Success)
             {
-                matchedKeyword = match.Groups["token"].Value;
+                string keyword = match.Groups["token"].Value;
+                matchedKeyword = new TokenMatch(startIndex, keyword, this);
                 return true;
             }
-
+            
             // Fehler.
             matchedKeyword = null;
             return false;
         }
-
+        
         /// <summary>
-        /// Ermittelt, ob die aktuelle Regex auf die Eingabe passt und entfernt dann das gefundene Token
-        /// vom Beginn der Sequenz oder lässt die Sequenz unverändert.
+        /// Ermittelt die Anzahl der am Anfang der Sequenz
         /// </summary>
         /// <param name="sequence">Die Sequenz</param>
-        /// <returns><c>true</c> im Erfolgsfall, ansonsten <c>false</c></returns>
-        public bool MatchAndTrim(ref string sequence)
+        /// <returns></returns>
+        private int CountLeftWhiteSpace(string sequence)
         {
             Contract.Requires(sequence != null);
-            string keyword;
-            if (IsMatch(sequence, out keyword))
-            {
-                sequence = sequence.Substring(keyword.Length);
-                return true;
-            }
-            return false;
+            int difference = sequence.Length - sequence.TrimStart().Length;
+            return difference;
         }
 
         /// <summary>

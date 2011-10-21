@@ -42,6 +42,7 @@ namespace Logic
             Contract.Requires(!String.IsNullOrWhiteSpace(sequence), "Sequenz darf nicht leer sein");
             List<TokenDescription> tokenDescriptions = new List<TokenDescription>();
             
+            /*
             sequence = sequence.Trim();
             while (sequence.Length > 0)
             {
@@ -53,6 +54,8 @@ namespace Logic
                 TokenDescription desciption = foundDescriptions[0];
                 tokenDescriptions.Add(desciption);
             }
+            */
+            return null;
         }
 
 

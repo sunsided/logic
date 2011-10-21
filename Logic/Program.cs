@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Logic
 {
@@ -12,14 +13,15 @@ namespace Logic
             TokenDescription or = new TokenDescription("OR");
             and.AddKeyword("or", "+", "^", "|", "||");
 
-		    string sequence = "and now what?";
-            if (and.MatchAndTrim(ref sequence))
+		    string sequence = "  and now what?";
+		    TokenMatch match;
+            if (and.IsMatch(sequence, 0, out match))
             {
                 Console.Write(sequence);
             }
 
             sequence = "or now what?";
-            if (and.MatchAndTrim(ref sequence))
+            if (and.IsMatch(sequence, 0, out match))
             {
                 Console.Write(sequence);
             }
