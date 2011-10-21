@@ -17,10 +17,10 @@ namespace Logic
             parser.AddDescription("NAND").AddKeyword("nand");
             parser.AddDescription("NOT>").AddKeyword("not", "!", "~");
             parser.AddDescription("<NOT").AddKeyword("'");
-            parser.AddDescription("GRPSTRT").AddKeyword("(");
-            parser.AddDescription("GRPEND").AddKeyword(")");
+            parser.AddDescription("GRPS").AddKeyword("(");
+            parser.AddDescription("GRPE").AddKeyword(")");
             
-		    string sequence = "(a and b) | (a and c)";
+		    string sequence = "(and) | (nand)";
 		    
 		    IList<TokenMatch> result = parser.Parse(sequence);
 
