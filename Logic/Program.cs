@@ -23,16 +23,51 @@ namespace Logic
             parser.AddDescription("GRPE", TokenType.GroupEnd).AddKeyword(")");
             parser.AddDescription("TERM", TokenType.Term).AddGenericTerms().IgnoreWord("and", "nand", "or", "nor", "xnor", "xor", "not");
             
-		    const string equation = "(a1 and !(b' + c)) | (a1 nand a2)'";
+		    const string equation = "(a1 and !(b' + c)) | (a1 nand a2)' + d*c";
 
             IList<TokenMatch> result = parser.Parse(equation);
             IList<TokenSequenceEntry> sequence = MatchListToHierarchySequence(parser, result);
+		    DumpSequence(sequence, 0);
 
             // Abbruch.
-            Console.WriteLine();
+		    Console.WriteLine();
             Console.WriteLine("Taste zum Beenden ...");
             Console.ReadKey(true);
 		}
+
+        /// <summary>
+        /// Gibt einen einfachen Dump der Sequenz aus
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <param name="indentLevel"></param>
+        private static void DumpSequence(IList<TokenSequenceEntry> sequence, int indentLevel)
+        {
+            const int indentDepth = 2;
+            for (int s = 0; s < sequence.Count; ++s)
+            {
+                TokenSequenceEntry entry = sequence[s];
+                if (entry is SequenceEntry)
+                {
+                    Console.WriteLine(new String(' ', indentLevel * indentDepth) + "{");                   
+                    DumpSequence(((SequenceEntry)entry).ChildSequence, indentLevel + 1);
+                    Console.WriteLine(new String(' ', indentLevel * indentDepth) + "}");
+                }
+                else
+                {
+                    Console.Write(new String(' ', indentLevel * indentDepth));
+
+                    TokenMatch match = ((TokenEntry) entry).Match;
+                    if (match.Type == TokenType.Term)
+                    {
+                        Console.WriteLine(match.Type + "(" + match.Token + ")");
+                    }
+                    else
+                    {
+                        Console.WriteLine(match.Type);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Wandelt die Liste in eine hierarchische Sequenz um
