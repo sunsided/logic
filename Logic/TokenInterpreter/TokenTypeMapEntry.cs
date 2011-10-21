@@ -14,7 +14,7 @@ namespace Logic.TokenInterpreter
         /// <summary>
         /// Gleichwertige Begriffe für dieses Token
         /// </summary>
-        private readonly HashSet<string> Token = new HashSet<string>();
+        private readonly HashSet<string> _token = new HashSet<string>();
 
         /// <summary>
         /// Der Token-Typ
@@ -37,10 +37,10 @@ namespace Logic.TokenInterpreter
             TokenType = tokenType;
 
             // Token hinzufügen
-            Token.Add(token);
+            _token.Add(token);
             for(int i=0; i<additionalTokens.Length; ++i)
             {
-                Token.Add(additionalTokens[i]);
+                _token.Add(additionalTokens[i]);
             }
         }
 
@@ -53,7 +53,7 @@ namespace Logic.TokenInterpreter
         /// </returns>
         public bool IsMatch(string token)
         {
-            return Token.Contains(token, StringComparer.InvariantCultureIgnoreCase);
+            return _token.Contains(token, StringComparer.InvariantCultureIgnoreCase);
         }
     }
 }
