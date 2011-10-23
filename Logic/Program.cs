@@ -23,7 +23,21 @@ namespace Logic
             parser.AddDescription("GRPE", TokenType.GroupEnd).AddKeyword(")");
             parser.AddDescription("TERM", TokenType.Term).AddGenericTerms().IgnoreWord("and", "nand", "or", "nor", "xnor", "xor", "not");
             
-		    const string equation = "(a1 and !(b' + c)) | (a1 nand a2)' + d*c";
+		    // const string equation = "(a1 and !(b' + c)) | (a1 nand a2)' + d*c";
+            const string equation = "(a * b + c * d) + (e + f + g) * h";
+
+            //                             
+            //             OR              
+            //           /    \            
+            //         /        \          
+            //      OR           AND       
+            //     /  \         /   \      
+            //  AND    AND     h    OR      <--|
+            //   /\     /\          /\         | Zusammenfassen zu n-ärem Operator?
+            //  a  b   c  d        e  OR    <--|
+            //                        /\   
+            //                       f  g  
+            //                             
 
             IList<TokenMatch> result = parser.Parse(equation);
             IList<TokenSequenceEntry> sequence = MatchListToHierarchySequence(parser, result);
