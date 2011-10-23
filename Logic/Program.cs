@@ -43,13 +43,109 @@ namespace Logic
             IList<TokenSequenceEntry> sequence = MatchListToHierarchySequence(parser, result);
 		    DumpSequence(sequence, 0);
             
+            // Hierarchiebaum erzeugen
+		    CreateHierarchyTree(sequence);
+
             // Abbruch.
 		    Console.WriteLine();
             Console.WriteLine("Taste zum Beenden ...");
             Console.ReadKey(true);
 		}
 
-        #region Dump
+        /// <summary>
+        /// Creates the hierarchy tree.
+        /// </summary>
+        /// <param name="sequence">The sequence.</param>
+        /// <remarks></remarks>
+        private static void CreateHierarchyTree(IList<TokenSequenceEntry> sequence)
+        {
+            Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
+
+            // Liste an OR-Operatoren trennen
+            IList<IList<TokenSequenceEntry>> sequences = SplitSequences(sequence, TokenType.Or, TokenType.Nor, TokenType.Xor, TokenType.Xnor);
+
+            // TODO: Wenn mehr als zwei Elemente: Diese sind ODER-verknüpft!
+        }
+
+        /// <summary>
+        /// Trennt eine Liste bei bestimmten Token
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <param name="splitAt"></param>
+        /// <param name="splitAtAdditional"></param>
+        /// <returns></returns>
+        private static IList<IList<TokenSequenceEntry>> SplitSequences(IList<TokenSequenceEntry> sequence, IList<TokenType> splitAtList)
+        {
+            Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
+            Contract.Requires(splitAtList != null, "Parameter dürfen nicht null sein");
+            Contract.Ensures(Contract.Result<IList<IList<TokenSequenceEntry>>>() != null);
+
+            // Sequenz in ODER-Gruppen trennen
+            IList<IList<TokenSequenceEntry>> subSequences = new List<IList<TokenSequenceEntry>>();
+            int lastSplitIndex = 0;
+            for (int s = 0; s < sequence.Count; ++s)
+            {
+                TokenEntry token = sequence[s] as TokenEntry;
+                if (token == null) continue;
+
+                // Prüfen, ob an dem Typen getrennt werden soll
+                if (!splitAtList.Contains(token.Match.Type)) continue;
+
+                // Elemente extrahieren
+                subSequences.Add(ExtractRange(sequence, lastSplitIndex, s));
+
+                // Neuen Index merken
+                lastSplitIndex = s + 1; // Das ODER überspringen
+                break;
+            }
+
+            // Fehlende Elemente eintüten
+            subSequences.Add(ExtractRange(sequence, lastSplitIndex, sequence.Count));
+            return subSequences;
+        }
+
+	    /// <summary>
+        /// Trennt eine Liste bei bestimmten Token
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <param name="splitAt"></param>
+        /// <param name="splitAtAdditional"></param>
+        /// <returns></returns>
+        private static IList<IList<TokenSequenceEntry>> SplitSequences(IList<TokenSequenceEntry> sequence, TokenType splitAt, params TokenType[] splitAtAdditional)
+	    {
+            Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
+            Contract.Requires(splitAtAdditional != null, "Parameter dürfen nicht null sein");
+            Contract.Ensures(Contract.Result<IList<IList<TokenSequenceEntry>>>() != null);
+
+            // Splitliste erzeugen
+            List<TokenType> splitAtList = new List<TokenType>(splitAtAdditional);
+            splitAtList.Add(splitAt);
+
+            // Und weiterreichen
+	        return SplitSequences(sequence, splitAtList);
+	    }
+
+	    /// <summary>
+        /// Extrahiert Elemente aus einer Sequenz
+        /// </summary>
+        /// <param name="sequence">Die Sequenz</param>
+        /// <param name="toExclusive">Der Index, vor dem gestoppt werden soll</param>
+        /// <param name="from">Der Startindex</param>
+        /// <returns>Die extrahierte Liste</returns>
+	    private static IList<TokenSequenceEntry> ExtractRange(IList<TokenSequenceEntry> sequence, int from, int toExclusive)
+	    {
+            Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
+            Contract.Ensures(Contract.Result<IList<TokenSequenceEntry>>() != null);
+
+	        IList<TokenSequenceEntry> subSequence = new List<TokenSequenceEntry>();
+	        for (int x = from; x < toExclusive; ++x)
+	        {
+	            subSequence.Add(sequence[x]);
+	        }
+	        return subSequence;
+	    }
+
+	    #region Dump
 
         /// <summary>
         /// Gibt einen einfachen Dump der Sequenz aus
