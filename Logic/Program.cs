@@ -42,12 +42,14 @@ namespace Logic
             IList<TokenMatch> result = parser.Parse(equation);
             IList<TokenSequenceEntry> sequence = MatchListToHierarchySequence(parser, result);
 		    DumpSequence(sequence, 0);
-
+            
             // Abbruch.
 		    Console.WriteLine();
             Console.WriteLine("Taste zum Beenden ...");
             Console.ReadKey(true);
 		}
+
+        #region Dump
 
         /// <summary>
         /// Gibt einen einfachen Dump der Sequenz aus
@@ -82,6 +84,10 @@ namespace Logic
                 }
             }
         }
+
+        #endregion Dump
+
+        #region Sequenzen
 
         /// <summary>
         /// Wandelt die Liste in eine hierarchische Sequenz um
@@ -192,5 +198,7 @@ namespace Logic
                 }
             }
         }
-	}
+
+        #endregion Sequenzen
+    }
 }
