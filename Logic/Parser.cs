@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Logic.Sequence;
 
 namespace Logic
 {
@@ -72,7 +73,7 @@ namespace Logic
         /// </summary>
         /// <param name="sequence">Die Sequenz</param>
         /// <returns>Die Liste der Token</returns>
-        public IList<TokenMatch> Parse(string sequence)
+        public IList<TokenSequenceEntry> Parse(string sequence)
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(sequence), "Sequenz darf nicht leer sein");
             Contract.Ensures(Contract.Result<IList<TokenDescription>>() != null);
@@ -105,9 +106,129 @@ namespace Logic
                 // Hochzählen
                 marchingIndex = match.Index + match.Length;
             }
-            return tokens;
+
+            // Tokenmatch-Liste umwandeln in Sequenz
+            return TokenMatchListToSequenceHierarchy(this, tokens);
         }
 
+        #region Sequenzen
+
+        /// <summary>
+        /// Wandelt die Liste in eine teilhierarchische Sequenz um. Hierdurch werden Gruppierungen
+        /// in Untersequenzen umgewandelt.
+        /// </summary>
+        /// <param name="parser">The parser.</param>
+        /// <param name="list">The list.</param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        private static IList<TokenSequenceEntry> TokenMatchListToSequenceHierarchy(Parser parser, IList<TokenMatch> list)
+        {
+            Contract.Requires(parser != null);
+            Contract.Requires(list != null);
+            Contract.Ensures(Contract.Result<IList<TokenSequenceEntry>>() != null);
+
+            // Die aktuelle Sequenz
+            IList<TokenSequenceEntry> sequence = new List<TokenSequenceEntry>();
+
+            // Der Stack der Sequenzen für die Gruppierungen
+            Stack<IList<TokenSequenceEntry>> groupStack = new Stack<IList<TokenSequenceEntry>>();
+
+            // Alle Token durchlaufen
+            for (int i = 0; i < list.Count; ++i)
+            {
+                TokenMatch match = list[i];
+
+                // Gruppierungen überprüfen
+                if (match.Type == TokenType.GroupStart)
+                {
+                    // Den aktuellen Eintrag (group start) ignorieren.
+                    // Aktuelle Gruppe auf den Stack legen und neue Sequenz beginnen.
+                    groupStack.Push(sequence);
+                    sequence = new List<TokenSequenceEntry>();
+                }
+                else if (match.Type == TokenType.GroupEnd)
+                {
+                    // Sanity check:
+                    if (groupStack.Count == 0) throw new ParenthesesMismatchException(ParenthesesMismatchException.ErrorType.TooManyClosing, "Syntaxfehler: Zu viele schließende Klammern.");
+
+                    // Den aktuellen Eintrag (group end) ignorieren.
+                    // Sequenzeintrag erzeugen, Elternsequenz vom Stack holen und Eintrag eintüten
+                    TokenSequenceEntry entry = new SequenceEntry(sequence);
+                    sequence = groupStack.Pop();
+                    sequence.Add(entry);
+                }
+                else
+                {
+                    // Aktuellen Eintrag als TokenEntry eintüten
+                    TokenEntry entry = new TokenEntry(match);
+                    sequence.Add(entry);
+                }
+            }
+
+            // Sanity check
+            if (groupStack.Count != 0) throw new ParenthesesMismatchException(ParenthesesMismatchException.ErrorType.TooFewClosing, "Syntaxfehler: Schließende Klammer fehlt.");
+
+            // Reverse-NOT entfernen
+            ReverseNotToForwardNot(parser, ref sequence);
+            return sequence;
+        }
+
+        /// <summary>
+        /// Entfernt Reverse-NOT und ersetzt sie durch Forward-NOT. Auf diese Weise muss nur eine Art von NOT bei der
+        /// Endverarbeitung beachtet werden.
+        /// </summary>
+        /// <param name="parser">The parser.</param>
+        /// <param name="sequence">Die zu beackernde Sequenz</param>
+        /// <remarks></remarks>
+        private static void ReverseNotToForwardNot(Parser parser, ref IList<TokenSequenceEntry> sequence)
+        {
+            Contract.Requires(parser != null);
+            Contract.Requires(sequence != null);
+            Contract.Ensures(Contract.ValueAtReturn(out sequence) != null);
+
+            // Sequenz durchlaufen. Wird eine Untersequenz gefunden, wird diese rekursiv ausgewertet.
+            // Wird ein rückwärts wirkendes NOT gefunden, wird ein neues, vorwärtswirkendes
+            // NOT erzeugt udn das alte Token überschrieben. Dieses Token wird vor den letzten Eintrag
+            // gesetzt, das aktuelle Not wird entfernt.
+            for (int s = 0; s < sequence.Count; ++s)
+            {
+                TokenSequenceEntry entry = sequence[s];
+
+                // Als Untersequenz auswerten
+                if (entry is SequenceEntry)
+                {
+                    IList<TokenSequenceEntry> subSequence = ((SequenceEntry)entry).ChildSequence;
+                    ReverseNotToForwardNot(parser, ref subSequence);
+                    continue;
+                }
+
+                // Als Token auswerten
+                TokenEntry token = entry as TokenEntry;
+                Contract.Assume(token != null);
+                if (token.Match.Type == TokenType.NotReverse)
+                {
+                    TokenMatch currentMatch = token.Match;
+
+                    // Neue Tokenbeschreibung erzwingen
+                    TokenDescription notDescription = parser.GetDescription(TokenType.Not);
+                    ITokenDescription newDescription = currentMatch.Description.GetOverride(notDescription);
+
+                    // Neues Token generieren
+                    TokenMatch newMatch = new TokenMatch(currentMatch.Index, currentMatch.Token, newDescription);
+
+                    // Neues Token einsetzen
+                    sequence.Insert(s - 1, new TokenEntry(newMatch));
+
+                    // Aktuelles Token entfernen.
+                    // Normalerweise müsste (s) entfernt werden - da jedoch durch die Insertoperation
+                    // die Indizes um eines verschoben sind, gilt (s+1). Anschließend
+                    // den Index von s um eines reduzieren, damit die Schleifenoperation nicht fehlschlägt.
+                    sequence.RemoveAt((s--) + 1);
+                }
+            }
+        }
+
+        #endregion Sequenzen
 
         #region Code Contracts
 
@@ -123,5 +244,7 @@ namespace Logic
         }
 
         #endregion
+
+
     }
 }

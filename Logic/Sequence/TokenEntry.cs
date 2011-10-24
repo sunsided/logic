@@ -29,6 +29,16 @@ namespace Logic.Sequence
         /// Ermittelt, ob es sich um eine NOT-Operation handelt
         /// </summary>
         /// <returns></returns>
+        public bool IsTerm()
+        {
+            TokenType type = Match.Type;
+            return type == TokenType.Term;
+        }
+
+        /// <summary>
+        /// Ermittelt, ob es sich um eine NOT-Operation handelt
+        /// </summary>
+        /// <returns></returns>
         public bool IsNotOperation()
         {
             TokenType type = Match.Type;
