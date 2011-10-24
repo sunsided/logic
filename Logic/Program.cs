@@ -27,6 +27,7 @@ namespace Logic
             
 		    // const string equation = "(a1 and !(b' + c)) | (a1 nand a2)' + d*c";
             const string equation = "(a * b + c * d)' or (e + f + g) and not h";
+            // const string equation = "(a * b) or (c * d)";
 
             //                             
             //             OR              
@@ -76,6 +77,8 @@ namespace Logic
             {
                 TokenSequenceEntry entry = sequence[s];
 
+                // Handelt es sich um ein Token, muss zwischen ODER-Operation
+                // und regulärem Token unterschieden werden.
                 if (entry is TokenEntry)
                 {
                     if (((TokenEntry)entry).IsOrOperation())
@@ -102,28 +105,43 @@ namespace Logic
                     }
                     else
                     {
+                        // Wenn es ein reguläres Token ist, dieses in die Verarbeitungsliste packen
                         workList.Add(entry);
                     }
                 }
                 else
                 {
+                    // Handelt es sich um eine Untersequenz, diese rekursiv behandeln und
+                    // das Ergebnis als Sequenz-Entry in die Verarbeitungsliste packen.
                     Contract.Assume(entry is SequenceEntry);
 
-                    // Sequenzen rekursiv abgrasen
+                    // Bionic on!
                     SequenceEntry sequenceEntry = (SequenceEntry) entry;
                     IList<TokenSequenceEntry> list = ReoderAnds(sequenceEntry.ChildSequence);
-                    workList.Add(new SequenceEntry(list));
+
+                    // Nur bei mehreren Einträgen Untersequenz erzeugen
+                    if (list.Count > 1)
+                    {
+                        workList.Add(new SequenceEntry(list));
+                    }
+                    else if (list.Count == 1)
+                    {
+                        workList.Add(list[0]);
+                    }
                 }
             }
 
-            // Gespeicherte Sequenz eintragen
+            // Am Ende der Verarbeitung muss der in der Liste verbliebene Rest noch 
+            // zur Ausgabeliste hinzugefügt werden.
             if (workList.Count > 1)
             {
+                // Aus Sequenzen Sequenz-Einträge machen
                 SequenceEntry rest = new SequenceEntry(workList);
                 tokenSequenceEntries.Add(rest);
             }
             else if (workList.Count == 1)
             {
+                // Einzelne Elemente dürfen einzeln angehängt werden.
                 tokenSequenceEntries.Add(workList[0]);
             }
 
