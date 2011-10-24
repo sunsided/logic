@@ -26,7 +26,7 @@ namespace Logic
             parser.AddDescription("TERM", TokenType.Term).AddGenericTerms().IgnoreWord("and", "nand", "or", "nor", "xnor", "xor", "not");
             
 		    // const string equation = "(a1 and !(b' + c)) | (a1 nand a2)' + d*c";
-            const string equation = "(a * b + c * d)' or (e + f + g) and not h";
+            const string equation = "(a * b + c * d)' or (e + f and g) and not h";
             // const string equation = "(a * b) or (c * d)";
 
             //                             
@@ -98,7 +98,7 @@ namespace Logic
                         }
 
                         // Arbeitsliste leeren
-                        workList.Clear();
+                        workList = new List<TokenSequenceEntry>();
                         
                         // ODER eintüten
                         tokenSequenceEntries.Add(entry);
