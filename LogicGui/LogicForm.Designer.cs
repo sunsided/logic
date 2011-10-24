@@ -1,6 +1,6 @@
 ﻿namespace LogicGui
 {
-    partial class Form1
+    partial class LogicForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,13 +29,16 @@
         private void InitializeComponent()
         {
             this.groupBoxEquation = new System.Windows.Forms.GroupBox();
-            this.textBoxEquation = new System.Windows.Forms.TextBox();
             this.buttonParse = new System.Windows.Forms.Button();
+            this.textBoxEquation = new System.Windows.Forms.TextBox();
             this.groupBoxTerms = new System.Windows.Forms.GroupBox();
             this.checkedListBoxTerms = new System.Windows.Forms.CheckedListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.labelResult = new System.Windows.Forms.Label();
             this.groupBoxEquation.SuspendLayout();
             this.groupBoxTerms.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBoxEquation
@@ -51,6 +54,17 @@
             this.groupBoxEquation.TabStop = false;
             this.groupBoxEquation.Text = "Gleichung";
             // 
+            // buttonParse
+            // 
+            this.buttonParse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonParse.Location = new System.Drawing.Point(365, 19);
+            this.buttonParse.Name = "buttonParse";
+            this.buttonParse.Size = new System.Drawing.Size(75, 23);
+            this.buttonParse.TabIndex = 1;
+            this.buttonParse.Text = "&Auswerten";
+            this.buttonParse.UseVisualStyleBackColor = true;
+            this.buttonParse.Click += new System.EventHandler(this.ButtonParseClick);
+            // 
             // textBoxEquation
             // 
             this.textBoxEquation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -61,16 +75,6 @@
             this.textBoxEquation.Size = new System.Drawing.Size(353, 49);
             this.textBoxEquation.TabIndex = 0;
             this.textBoxEquation.Text = "(a or b) and (a or not c)";
-            // 
-            // buttonParse
-            // 
-            this.buttonParse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonParse.Location = new System.Drawing.Point(365, 19);
-            this.buttonParse.Name = "buttonParse";
-            this.buttonParse.Size = new System.Drawing.Size(75, 23);
-            this.buttonParse.TabIndex = 1;
-            this.buttonParse.Text = "&Auswerten";
-            this.buttonParse.UseVisualStyleBackColor = true;
             // 
             // groupBoxTerms
             // 
@@ -90,9 +94,12 @@
             this.checkedListBoxTerms.Name = "checkedListBoxTerms";
             this.checkedListBoxTerms.Size = new System.Drawing.Size(223, 139);
             this.checkedListBoxTerms.TabIndex = 0;
+            this.checkedListBoxTerms.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBoxTermsItemCheck);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.labelResult);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Enabled = false;
             this.groupBox1.Location = new System.Drawing.Point(253, 92);
             this.groupBox1.Name = "groupBox1";
@@ -100,6 +107,24 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Auswertung";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(51, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Ergebnis:";
+            // 
+            // labelResult
+            // 
+            this.labelResult.AutoSize = true;
+            this.labelResult.Location = new System.Drawing.Point(6, 41);
+            this.labelResult.Name = "labelResult";
+            this.labelResult.Size = new System.Drawing.Size(29, 13);
+            this.labelResult.TabIndex = 1;
+            this.labelResult.Text = "false";
             // 
             // Form1
             // 
@@ -117,6 +142,8 @@
             this.groupBoxEquation.ResumeLayout(false);
             this.groupBoxEquation.PerformLayout();
             this.groupBoxTerms.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -129,6 +156,8 @@
         private System.Windows.Forms.GroupBox groupBoxTerms;
         private System.Windows.Forms.CheckedListBox checkedListBoxTerms;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label labelResult;
+        private System.Windows.Forms.Label label1;
     }
 }
 

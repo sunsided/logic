@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ITokenDescription.cs" />
+    <Compile Include="LogicParser.cs" />
     <Compile Include="Nodes\Attributes\BinaryOperatorAttribute.cs" />
     <Compile Include="Nodes\Attributes\NodeAttribute.cs" />
     <Compile Include="Nodes\Attributes\TermAttribute.cs" />

@@ -61,6 +61,21 @@ namespace Logic.Nodes
         }
 
         /// <summary>
+        /// Clears this instance.
+        /// </summary>
+        /// <remarks></remarks>
+        public void Clear()
+        {
+            foreach (var term in _terms)
+            {
+                foreach (TermNode t1 in term.Value)
+                {
+                    t1.Value = false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Setzt den Wert des Terms
         /// </summary>
         /// <param name="term">The term.</param>
