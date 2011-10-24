@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Logic.Nodes;
 using Logic.Sequence;
 
 namespace Logic
@@ -24,7 +25,7 @@ namespace Logic
             parser.AddDescription("TERM", TokenType.Term).AddGenericTerms().IgnoreWord("and", "nand", "or", "nor", "xnor", "xor", "not");
             
 		    // const string equation = "(a1 and !(b' + c)) | (a1 nand a2)' + d*c";
-            const string equation = "(a * b + c * d) + (e + f + g) * h";
+            const string equation = "(a * b + c * d)' or (e + f + g) and not h";
 
             //                             
             //             OR              
@@ -41,10 +42,12 @@ namespace Logic
 
             IList<TokenMatch> result = parser.Parse(equation);
             IList<TokenSequenceEntry> sequence = MatchListToHierarchySequence(parser, result);
-		    DumpSequence(sequence, 0);
+
+            Queue<TokenSequenceEntry> seqQueue = new Queue<TokenSequenceEntry>(sequence); 
+            DumpSequence(sequence, 0);
             
             // Hierarchiebaum erzeugen
-		    CreateHierarchyTree(sequence);
+		    TokenNode node = CreateHierarchyTree(seqQueue);
 
             // Abbruch.
 		    Console.WriteLine();
@@ -53,97 +56,88 @@ namespace Logic
 		}
 
         /// <summary>
+        /// Extrahiert Knoten aus der Sequenz
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        private static TokenNode ExtractNode(Queue<TokenSequenceEntry> sequence)
+        {
+            Contract.Requires(sequence != null);
+
+            TokenSequenceEntry tse = sequence.Dequeue();
+            Contract.Assume(tse != null);
+
+            if (tse is SequenceEntry)
+            {
+                SequenceEntry se = (SequenceEntry) tse;
+                return CreateHierarchyTree(new Queue<TokenSequenceEntry>(se.ChildSequence));
+            }
+
+            TokenEntry te = tse as TokenEntry;
+            Contract.Assume(te != null);
+
+            switch(te.Match.Type)
+            {
+                case TokenType.Not:
+                    UnaryOperatorNode notOperator = new UnaryOperatorNode {Match = te.Match, Node = ExtractNode(sequence)};
+                    return notOperator;
+
+                case TokenType.Term:
+                    TermNode termNode = new TermNode {Match = te.Match};
+                    return termNode;
+
+                case TokenType.And:
+                case TokenType.Nand:
+                case TokenType.Or:
+                case TokenType.Nor:
+                case TokenType.Xor:
+                case TokenType.Xnor:
+                    BinaryOperatorNode binaryNode = new BinaryOperatorNode();
+                    binaryNode.Match = te.Match;
+                    return binaryNode;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Creates the hierarchy tree.
         /// </summary>
         /// <param name="sequence">The sequence.</param>
         /// <remarks></remarks>
-        private static void CreateHierarchyTree(IList<TokenSequenceEntry> sequence)
+        private static TokenNode CreateHierarchyTree(Queue<TokenSequenceEntry> sequence)
         {
             Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
 
-            // Liste an OR-Operatoren trennen
-            IList<IList<TokenSequenceEntry>> sequences = SplitSequences(sequence, TokenType.Or, TokenType.Nor, TokenType.Xor, TokenType.Xnor);
+            Queue<TokenNode> nodeStack = new Queue<TokenNode>();
 
-            // TODO: Wenn mehr als zwei Elemente: Diese sind ODER-verknüpft!
-        }
-
-        /// <summary>
-        /// Trennt eine Liste bei bestimmten Token
-        /// </summary>
-        /// <param name="sequence"></param>
-        /// <param name="splitAt"></param>
-        /// <param name="splitAtAdditional"></param>
-        /// <returns></returns>
-        private static IList<IList<TokenSequenceEntry>> SplitSequences(IList<TokenSequenceEntry> sequence, IList<TokenType> splitAtList)
-        {
-            Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
-            Contract.Requires(splitAtList != null, "Parameter dürfen nicht null sein");
-            Contract.Ensures(Contract.Result<IList<IList<TokenSequenceEntry>>>() != null);
-
-            // Sequenz in ODER-Gruppen trennen
-            IList<IList<TokenSequenceEntry>> subSequences = new List<IList<TokenSequenceEntry>>();
-            int lastSplitIndex = 0;
-            for (int s = 0; s < sequence.Count; ++s)
+            while (sequence.Count > 0)
             {
-                TokenEntry token = sequence[s] as TokenEntry;
-                if (token == null) continue;
+                // Token lesen und merken
+                TokenNode node = ExtractNode(sequence);
+                nodeStack.Enqueue(node);
 
-                // Prüfen, ob an dem Typen getrennt werden soll
-                if (!splitAtList.Contains(token.Match.Type)) continue;
+                // Wenn drei Token gemerkt sind
+                if (nodeStack.Count == 3)
+                {
+                    // Alle Elemente entnehmen
+                    TokenNode left = nodeStack.Dequeue();
+                    BinaryOperatorNode binaryNode = (BinaryOperatorNode)nodeStack.Dequeue();
+                    TokenNode right = nodeStack.Dequeue();
 
-                // Elemente extrahieren
-                subSequences.Add(ExtractRange(sequence, lastSplitIndex, s));
+                    // Nachtragen
+                    binaryNode.LeftNode = left;
+                    binaryNode.RightNode = right;
 
-                // Neuen Index merken
-                lastSplitIndex = s + 1; // Das ODER überspringen
-                break;
+                    // Wieder eintüten
+                    nodeStack.Enqueue(binaryNode);
+                }
+
+                // TODO: Nächsten Token verarbeiten
+                // TODO: Hauptverarbeitungslogik
             }
-
-            // Fehlende Elemente eintüten
-            subSequences.Add(ExtractRange(sequence, lastSplitIndex, sequence.Count));
-            return subSequences;
+            return nodeStack.Dequeue();
         }
-
-	    /// <summary>
-        /// Trennt eine Liste bei bestimmten Token
-        /// </summary>
-        /// <param name="sequence"></param>
-        /// <param name="splitAt"></param>
-        /// <param name="splitAtAdditional"></param>
-        /// <returns></returns>
-        private static IList<IList<TokenSequenceEntry>> SplitSequences(IList<TokenSequenceEntry> sequence, TokenType splitAt, params TokenType[] splitAtAdditional)
-	    {
-            Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
-            Contract.Requires(splitAtAdditional != null, "Parameter dürfen nicht null sein");
-            Contract.Ensures(Contract.Result<IList<IList<TokenSequenceEntry>>>() != null);
-
-            // Splitliste erzeugen
-            List<TokenType> splitAtList = new List<TokenType>(splitAtAdditional);
-            splitAtList.Add(splitAt);
-
-            // Und weiterreichen
-	        return SplitSequences(sequence, splitAtList);
-	    }
-
-	    /// <summary>
-        /// Extrahiert Elemente aus einer Sequenz
-        /// </summary>
-        /// <param name="sequence">Die Sequenz</param>
-        /// <param name="toExclusive">Der Index, vor dem gestoppt werden soll</param>
-        /// <param name="from">Der Startindex</param>
-        /// <returns>Die extrahierte Liste</returns>
-	    private static IList<TokenSequenceEntry> ExtractRange(IList<TokenSequenceEntry> sequence, int from, int toExclusive)
-	    {
-            Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
-            Contract.Ensures(Contract.Result<IList<TokenSequenceEntry>>() != null);
-
-	        IList<TokenSequenceEntry> subSequence = new List<TokenSequenceEntry>();
-	        for (int x = from; x < toExclusive; ++x)
-	        {
-	            subSequence.Add(sequence[x]);
-	        }
-	        return subSequence;
-	    }
 
 	    #region Dump
 
