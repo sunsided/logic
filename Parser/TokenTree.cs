@@ -76,7 +76,7 @@ namespace Logic.Nodes
         /// </summary>
         /// <param name="node">The node.</param>
         /// <remarks></remarks>
-        public TokenTree(TokenNode node)
+        internal TokenTree(TokenNode node)
         {
             Contract.Requires(node != null);
 

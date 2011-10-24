@@ -10,7 +10,7 @@ namespace Logic
     /// <summary>
     /// Der Token-Node-Cache
     /// </summary>
-    public static class TokenTypeNodeCache
+    internal static class TokenTypeNodeCache
     {
         /// <summary>
         /// Der Lookup der Typen

@@ -58,7 +58,7 @@ namespace Logic
         /// </summary>
         /// <param name="descriptionText">The description text.</param>
         /// <remarks></remarks>
-        public TokenDescription(string descriptionText, TokenType type)
+        internal TokenDescription(string descriptionText, TokenType type)
         {
             Contract.Requires(descriptionText != null, "Beschreibungstext darf nicht null sein");
             Description = descriptionText;
@@ -239,7 +239,7 @@ namespace Logic
         /// </summary>
         /// <param name="newDescription"></param>
         /// <returns></returns>
-        public TokenDescriptionOverride GetOverride(TokenDescription newDescription)
+        public ITokenDescription GetOverride(TokenDescription newDescription)
         {
             Contract.Requires(newDescription != null);
             Contract.Ensures(Contract.Result<TokenDescriptionOverride>() != null);

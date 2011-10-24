@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6CF5DB0C-9191-4E2F-A9D7-9E759A9DA839}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Logic</RootNamespace>
+    <AssemblyName>Parser</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ITokenDescription.cs" />
+    <Compile Include="Nodes\Attributes\BinaryOperatorAttribute.cs" />
+    <Compile Include="Nodes\Attributes\NodeAttribute.cs" />
+    <Compile Include="Nodes\Attributes\TermAttribute.cs" />
+    <Compile Include="Nodes\Attributes\UnaryOperatorAttribute.cs" />
+    <Compile Include="Nodes\BinaryOperatorNode.cs" />
+    <Compile Include="Nodes\BinaryOperators\AndNode.cs" />
+    <Compile Include="Nodes\BinaryOperators\NandNode.cs" />
+    <Compile Include="Nodes\BinaryOperators\NorNode.cs" />
+    <Compile Include="Nodes\BinaryOperators\OrNode.cs" />
+    <Compile Include="Nodes\BinaryOperators\XnorNode.cs" />
+    <Compile Include="Nodes\BinaryOperators\XorNode.cs" />
+    <Compile Include="Nodes\TermNode.cs" />
+    <Compile Include="Nodes\TokenNode.cs" />
+    <Compile Include="Nodes\UnaryOperatorNode.cs" />
+    <Compile Include="Nodes\UnaryOperators\NotNode.cs" />
+    <Compile Include="ParenthesesMismatchException.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="ParserRegexBuilder.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sequence\SequenceEntry.cs" />
+    <Compile Include="Sequence\TokenEntry.cs" />
+    <Compile Include="Sequence\TokenSequenceEntry.cs" />
+    <Compile Include="TokenDescription.cs" />
+    <Compile Include="TokenDescriptionOverride.cs" />
+    <Compile Include="TokenMatch.cs" />
+    <Compile Include="TokenTree.cs" />
+    <Compile Include="TokenType.cs" />
+    <Compile Include="TokenTypeNodeCache.cs" />
+    <Compile Include="TreeGenerator.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

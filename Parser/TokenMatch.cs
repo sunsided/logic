@@ -43,7 +43,7 @@ namespace Logic
         /// <param name="token">The token.</param>
         /// <param name="description">The description.</param>
         /// <remarks></remarks>
-        public TokenMatch(int index, string token, ITokenDescription description)
+        internal TokenMatch(int index, string token, ITokenDescription description)
         {
             Contract.Requires(index >= 0, "Index muss größer oder gleich 0 sein");
             Contract.Requires(!String.IsNullOrWhiteSpace(token), "Token darf nicht leer sein");

@@ -19,6 +19,6 @@ namespace Logic
         /// </summary>
         /// <param name="newDescription">Die neue Beschreibung</param>
         /// <returns>Der Override</returns>
-        TokenDescriptionOverride GetOverride(TokenDescription newDescription);
+        ITokenDescription GetOverride(TokenDescription newDescription);
     }
 }

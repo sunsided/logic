@@ -7,7 +7,7 @@ namespace Logic
     /// Die Beschreibung eines Tokens
     /// </summary>
     [DebuggerDisplay("Override {OriginalDescription.Description} -> {NewDescription.Description}")]
-    public sealed class TokenDescriptionOverride : ITokenDescription
+    internal sealed class TokenDescriptionOverride : ITokenDescription
     {
         /// <summary>
         /// Gets the original description.
@@ -57,7 +57,7 @@ namespace Logic
         /// </summary>
         /// <param name="newDescription">Die neue Beschreibung</param>
         /// <returns>Der Override</returns>
-        public TokenDescriptionOverride GetOverride(TokenDescription newDescription)
+        public ITokenDescription GetOverride(TokenDescription newDescription)
         {
             return new TokenDescriptionOverride(this, newDescription);
         }

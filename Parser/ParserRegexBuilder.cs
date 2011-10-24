@@ -9,7 +9,7 @@ namespace Logic
     /// <summary>
     /// Helferklasse für das Erstellen von Regular Expressions für den Parser
     /// </summary>
-    public static class ParserRegexBuilder
+    internal static class ParserRegexBuilder
     {
         /// <summary>
         /// Die Default-Optionen für die Regex
