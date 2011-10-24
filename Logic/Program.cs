@@ -32,8 +32,16 @@ namespace Logic
 
             // Hierarchiebaum erzeugen
             TreeGenerator generator = new TreeGenerator();
-            TokenNode node = generator.GenerateHierarchy(result);
+            TokenTree tree = generator.GenerateHierarchy(result);
             
+            // Testen
+		    tree["a"] = true;
+            tree["b"] = true;
+            Console.WriteLine("Wahrheit für a, b = true: " + tree.Evaluate());
+
+            tree["b"] = false;
+            Console.WriteLine("Wahrheit für b = false:   " + tree.Evaluate());
+
             // Abbruch.
             Console.WriteLine();
             Console.WriteLine("Taste zum Beenden ...");

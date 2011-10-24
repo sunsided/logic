@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Logic.Nodes;
+using Logic.Nodes.UnaryOperators;
 using Logic.Sequence;
 
 namespace Logic
@@ -15,18 +17,22 @@ namespace Logic
         /// </summary>
         /// <param name="sequence">Die Sequenz</param>
         /// <returns>Die Hierarchie</returns>
-        public TokenNode GenerateHierarchy(IList<TokenSequenceEntry> sequence)
+        public TokenTree GenerateHierarchy(IList<TokenSequenceEntry> sequence)
         {
             Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
-            Contract.Ensures(Contract.Result<TokenNode>() != null);
+            Contract.Ensures(Contract.Result<TokenTree>() != null);
 
             // ANDs gruppieren
             sequence = ReoderAnds(sequence);
 
             // Eigentliche Erzeugungslogik
-            return CreateHierarchyTree(new Queue<TokenSequenceEntry>(sequence));
-        }
+            TokenNode node = CreateHierarchyTree(new Queue<TokenSequenceEntry>(sequence));
 
+            // Tree erzeugen
+            TokenTree tree = new TokenTree(node);
+            return tree;
+        }
+        
         /// <summary>
         /// Creates the hierarchy tree.
         /// </summary>
@@ -95,7 +101,7 @@ namespace Logic
             // weiteren Knoten lesen und diesen als Unterelement eines unären Operators speichern
             if (te.IsNotOperation())
             {
-                UnaryOperatorNode notOperator = new UnaryOperatorNode { Match = te.Match, Node = ExtractNode(sequence) };
+                UnaryOperatorNode notOperator = new NotNode { Match = te.Match, Node = ExtractNode(sequence) };
                 return notOperator;
             }
 
@@ -103,7 +109,7 @@ namespace Logic
             // unären Operator erzeugen
             if (te.IsBinaryOperation())
             {
-                BinaryOperatorNode binaryNode = new BinaryOperatorNode();
+                BinaryOperatorNode binaryNode = (BinaryOperatorNode) TokenTypeNodeCache.CreateNode(te.Match.Type);
                 binaryNode.Match = te.Match;
                 return binaryNode;
             }

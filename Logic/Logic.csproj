@@ -80,6 +80,7 @@
     <Compile Include="Nodes\BinaryOperators\NorNode.cs" />
     <Compile Include="Nodes\BinaryOperators\OrNode.cs" />
     <Compile Include="Nodes\BinaryOperators\NandNode.cs" />
+    <Compile Include="TokenTree.cs" />
     <Compile Include="Nodes\UnaryOperatorNode.cs" />
     <Compile Include="Nodes\TermNode.cs" />
     <Compile Include="Nodes\UnaryOperators\NotNode.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="TokenMatch.cs" />
     <Compile Include="Nodes\TokenNode.cs" />
     <Compile Include="TokenType.cs" />
+    <Compile Include="TokenTypeNodeCache.cs" />
     <Compile Include="TreeGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

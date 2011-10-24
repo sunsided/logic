@@ -13,6 +13,11 @@ namespace Logic.Nodes
         public TokenMatch Match { [Pure] get; set; }
 
         /// <summary>
+        /// Der Name des Terms
+        /// </summary>
+        public string Name { [Pure] get { return Match.Token; } }
+
+        /// <summary>
         /// Der Wahrheitswert des Knotens
         /// </summary>
         public bool Value { [Pure] get; set; }
