@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Reflection;
 using Logic.Nodes;
 using Logic.Nodes.Attributes;
@@ -59,7 +60,7 @@ namespace Logic
         {
             Type type = GetNodeType(tokenType);
             if (type == null) return null;
-            return (TokenNode)Activator.CreateInstance(type);
+            return (TokenNode) Activator.CreateInstance(type);
         }
     }
 }

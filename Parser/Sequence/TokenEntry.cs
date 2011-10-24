@@ -7,7 +7,7 @@ namespace Logic.Sequence
     /// Ein Token-Eintrag
     /// </summary>
     [DebuggerDisplay("token: {Match}")]
-    public sealed class TokenEntry : TokenSequenceEntry
+    internal sealed class TokenEntry : TokenSequenceEntry
     {
         /// <summary>
         /// Die zugehörige TokenMatch-Instanz

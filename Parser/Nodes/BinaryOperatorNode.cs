@@ -8,6 +8,12 @@ namespace Logic.Nodes
     public abstract class BinaryOperatorNode : TokenNode
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+        /// </summary>
+        /// <remarks></remarks>
+        internal BinaryOperatorNode() { }
+
+        /// <summary>
         /// Der Match
         /// </summary>
         public TokenMatch Match { [Pure] get; set; }

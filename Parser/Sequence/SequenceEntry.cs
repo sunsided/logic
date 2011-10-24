@@ -8,7 +8,7 @@ namespace Logic.Sequence
     /// Ein Sequenzeintrag
     /// </summary>
     [DebuggerDisplay("sequence of length {Count}")]
-    public sealed class SequenceEntry : TokenSequenceEntry
+    internal sealed class SequenceEntry : TokenSequenceEntry
     {
         /// <summary>
         /// Die Kindsequenz
