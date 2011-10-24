@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Logic.Nodes;
@@ -42,19 +43,94 @@ namespace Logic
 
             IList<TokenMatch> result = parser.Parse(equation);
             IList<TokenSequenceEntry> sequence = MatchListToHierarchySequence(parser, result);
+		    sequence = ReoderAnds(sequence);
 
             Queue<TokenSequenceEntry> seqQueue = new Queue<TokenSequenceEntry>(sequence); 
             DumpSequence(sequence, 0);
             
             // Hierarchiebaum erzeugen
-		    TokenNode node = CreateHierarchyTree(seqQueue);
+            TokenNode node = CreateHierarchyTree(seqQueue);
 
             // Abbruch.
-		    Console.WriteLine();
+            Console.WriteLine();
             Console.WriteLine("Taste zum Beenden ...");
             Console.ReadKey(true);
-		}
+        }
 
+        /// <summary>
+        /// Erzeugt eine Queue aus der Sequenz und ordnet die ANDs neu an
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        private static IList<TokenSequenceEntry> ReoderAnds(IList<TokenSequenceEntry> sequence)
+        {
+            Contract.Requires(sequence != null);
+            Contract.Ensures(Contract.Result<IList<TokenSequenceEntry>>() != null);
+
+            // Die neue Liste
+            IList<TokenSequenceEntry> tokenSequenceEntries = new List<TokenSequenceEntry>();
+
+            // Die Sammelliste
+            IList<TokenSequenceEntry> workList = new List<TokenSequenceEntry>();
+            for (int s=0; s<sequence.Count; ++s)
+            {
+                TokenSequenceEntry entry = sequence[s];
+
+                if (entry is TokenEntry)
+                {
+                    if (((TokenEntry)entry).IsOrOperation())
+                    {
+                        // Wenn in der Arbeitsliste mehr als ein Eintrag ist, Untersequenz erzeugen
+                        Contract.Assume(workList.Count > 0);
+                        if (workList.Count > 1)
+                        {
+                            // Gespeicherte Sequenz eintragen
+                            SequenceEntry left = new SequenceEntry(workList);
+                            tokenSequenceEntries.Add(left);
+                        }
+                        else
+                        {
+                            // Ansonsten diesen Eintrag einzeln hinzufügen
+                            tokenSequenceEntries.Add(workList[0]);
+                        }
+
+                        // Arbeitsliste leeren
+                        workList.Clear();
+                        
+                        // ODER eintüten
+                        tokenSequenceEntries.Add(entry);
+                    }
+                    else
+                    {
+                        workList.Add(entry);
+                    }
+                }
+                else
+                {
+                    Contract.Assume(entry is SequenceEntry);
+
+                    // Sequenzen rekursiv abgrasen
+                    SequenceEntry sequenceEntry = (SequenceEntry) entry;
+                    IList<TokenSequenceEntry> list = ReoderAnds(sequenceEntry.ChildSequence);
+                    workList.Add(new SequenceEntry(list));
+                }
+            }
+
+            // Gespeicherte Sequenz eintragen
+            if (workList.Count > 1)
+            {
+                SequenceEntry rest = new SequenceEntry(workList);
+                tokenSequenceEntries.Add(rest);
+            }
+            else if (workList.Count == 1)
+            {
+                tokenSequenceEntries.Add(workList[0]);
+            }
+
+            // Und tschüss!
+            return tokenSequenceEntries;
+        }
+        
         /// <summary>
         /// Extrahiert Knoten aus der Sequenz
         /// </summary>
@@ -63,6 +139,7 @@ namespace Logic
         private static TokenNode ExtractNode(Queue<TokenSequenceEntry> sequence)
         {
             Contract.Requires(sequence != null);
+            Contract.Ensures(Contract.Result<TokenNode>() != null);
 
             TokenSequenceEntry tse = sequence.Dequeue();
             Contract.Assume(tse != null);
@@ -108,6 +185,7 @@ namespace Logic
         private static TokenNode CreateHierarchyTree(Queue<TokenSequenceEntry> sequence)
         {
             Contract.Requires(sequence != null, "Sequenz darf nicht null sein");
+            Contract.Ensures(Contract.Result<TokenNode>() != null);
 
             Queue<TokenNode> nodeStack = new Queue<TokenNode>();
 
