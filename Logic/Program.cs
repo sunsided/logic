@@ -1,6 +1,10 @@
 ﻿using System;
-using Logic.LanguageParser;
-using Logic.LanguageParser.Descriptions;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using Logic.Nodes;
+using Logic.Sequence;
 
 namespace Logic
 {
@@ -8,35 +12,40 @@ namespace Logic
 	{
 		static void Main(string[] args)
 		{
-		    const string binaryOperatorTerms = "and|or|nand|nor|xor";
-            const string unaryOperatorTerms = "not";
-
             Parser parser = new Parser();
-            parser.Add(new BinaryOperatorToken(@"^([\+\*\|\^]|" + binaryOperatorTerms + ")", "Operatoren (binär)"));
-            parser.Add(new PostfixNegationToken(@"^'", "Negation (postfix)"));
-            parser.Add(new PrefixNegationToken(@"^(~|" + unaryOperatorTerms + ")", "Negation (prefix)"));
-            parser.Add(new TermToken(@"^(?!(" + binaryOperatorTerms + "|" + unaryOperatorTerms + "))[a-z]+([0-9]|[a-z]|_)*", "Term"));
-            parser.Add(new GroupOpenToken(@"^\(", "Klammern (öffnend)"));
-            parser.Add(new GroupCloseToken(@"^\)", "Klammern (schließend)"));
-
-		    string equation = "foo + (Alpha + Beta') * (input3 + ~data_avail) and not foo";
-
-            // Token basicToken = new Token(equation);
-		    var tokenList = parser.Parse(equation);
-
-            // Ausgeben, weil wegen
-            Console.WriteLine("{0,-5}{1,-20}{2}", "Idx", "Wert", "Klasse");
-            Console.WriteLine();
-            for (int ti=0; ti<tokenList.Count; ++ti)
-            {
-                Token token = tokenList[ti];
-                Console.WriteLine("{0,-5}{1,-20}{2}" , token.Index, token.Value, token.OriginDescription.Description);
-            }
+		    parser.AddDescription("AND", TokenType.And).AddKeyword("and", "*", "&", "&&");
+            parser.AddDescription("OR", TokenType.Or).AddKeyword("or", "+", "^", "|", "||");
+            parser.AddDescription("XOR", TokenType.Xor).AddKeyword("xor");
+            parser.AddDescription("NOR", TokenType.Nor).AddKeyword("nor");
+            parser.AddDescription("XNOR", TokenType.Xnor).AddKeyword("xnor");
+            parser.AddDescription("NAND", TokenType.Nand).AddKeyword("nand");
+            parser.AddDescription("NOT>", TokenType.Not).AddKeyword("not", "!", "~");
+            parser.AddDescription("<NOT", TokenType.NotReverse).AddKeyword("'");
+            parser.AddDescription("GRPS", TokenType.GroupStart).AddKeyword("(");
+            parser.AddDescription("GRPE", TokenType.GroupEnd).AddKeyword(")");
+            parser.AddDescription("TERM", TokenType.Term).AddGenericTerms().IgnoreWord("and", "nand", "or", "nor", "xnor", "xor", "not");
             
+            const string equation = "(a * b + c * d)' or (e + f and g) and not h";
+
+            // Parsen
+            IList<TokenSequenceEntry> result = parser.Parse(equation);
+
+            // Hierarchiebaum erzeugen
+            TreeGenerator generator = new TreeGenerator();
+            TokenTree tree = generator.GenerateHierarchy(result);
+            
+            // Testen
+		    tree["a"] = true;
+            tree["b"] = true;
+            Console.WriteLine("Wahrheit für a, b = true: " + tree.Evaluate());
+
+            tree["b"] = false;
+            Console.WriteLine("Wahrheit für b = false:   " + tree.Evaluate());
+
             // Abbruch.
             Console.WriteLine();
             Console.WriteLine("Taste zum Beenden ...");
             Console.ReadKey(true);
-		}
-	}
+        }
+    }
 }
