@@ -69,6 +69,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Nodes\BinaryOperatorNode.cs" />
+    <Compile Include="Nodes\UnaryOperatorNode.cs" />
+    <Compile Include="Nodes\TermNode.cs" />
     <Compile Include="TokenDescriptionOverride.cs" />
     <Compile Include="ITokenDescription.cs" />
     <Compile Include="ParenthesesMismatchException.cs" />
@@ -81,6 +84,7 @@
     <Compile Include="TokenDescription.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="TokenMatch.cs" />
+    <Compile Include="Nodes\TokenNode.cs" />
     <Compile Include="TokenType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
