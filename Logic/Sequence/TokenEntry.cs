@@ -24,5 +24,44 @@ namespace Logic.Sequence
             Contract.Requires(match != null, "Match darf nicht null sein");
             Match = match;
         }
+
+        /// <summary>
+        /// Ermittelt, ob es sich um eine NOT-Operation handelt
+        /// </summary>
+        /// <returns></returns>
+        public bool IsNotOperation()
+        {
+            TokenType type = Match.Type;
+            return type == TokenType.Not || type == TokenType.NotReverse;
+        }
+
+        /// <summary>
+        /// Ermittelt, ob es sich um eine ODER-Operation handelt
+        /// </summary>
+        /// <returns></returns>
+        public bool IsBinaryOperation()
+        {
+            return IsAndOperation() || IsOrOperation();
+        }
+
+        /// <summary>
+        /// Ermittelt, ob es sich um eine ODER-Operation handelt
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAndOperation()
+        {
+            TokenType type = Match.Type;
+            return type == TokenType.And || type == TokenType.Nand;
+        }
+
+        /// <summary>
+        /// Ermittelt, ob es sich um eine ODER-Operation handelt
+        /// </summary>
+        /// <returns></returns>
+        public bool IsOrOperation()
+        {
+            TokenType type = Match.Type;
+            return type == TokenType.Or || type == TokenType.Xnor || type == TokenType.Xor || type == TokenType.Nor;
+        }
     }
 }
