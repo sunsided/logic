@@ -11,5 +11,19 @@ namespace Logic.Nodes
         /// Der Match
         /// </summary>
         public TokenMatch Match { [Pure] get; set; }
+
+        /// <summary>
+        /// Der Wahrheitswert des Knotens
+        /// </summary>
+        public bool Value { [Pure] get; set; }
+
+        /// <summary>
+        /// Wertet diesen Knoten aus
+        /// </summary>
+        /// <returns>Der Wahrheitswert dieses Knotens</returns>
+        public override bool Evaluate()
+        {
+            return Value;
+        }
     }
 }

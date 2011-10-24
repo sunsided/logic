@@ -5,7 +5,7 @@ namespace Logic.Nodes
     /// <summary>
     /// Ein Term
     /// </summary>
-    public sealed class BinaryOperatorNode : TokenNode
+    public abstract class BinaryOperatorNode : TokenNode
     {
         /// <summary>
         /// Der Match

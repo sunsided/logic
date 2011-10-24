@@ -3,9 +3,9 @@
 namespace Logic.Nodes
 {
     /// <summary>
-    /// Ein Term
+    /// Negation
     /// </summary>
-    public sealed class UnaryOperatorNode : TokenNode
+    public abstract class UnaryOperatorNode : TokenNode
     {
         /// <summary>
         /// Der Match
